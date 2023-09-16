@@ -34,7 +34,7 @@ public class JfxView {
      * Create the main view of the application.
      */
         // TODO: style error in the following line. Check that checkstyle finds it, and then fix it.
-        public JfxView(final Stage stage, final int width, final int height){
+        public JfxView(final Stage stage, final int width, final int height) {
         stage.setTitle("Eliza GPT");
 
         final VBox root = new VBox(10);
@@ -67,6 +67,7 @@ public class JfxView {
     static final String USER_STYLE = "-fx-background-color: #A0E0A0; " + BASE_STYLE;
     static final String ELIZA_STYLE = "-fx-background-color: #A0A0E0; " + BASE_STYLE;
 
+    //same code that the sendMessage function. We have to simplify both functions.
     private void replyToUser(final String text) {
         HBox hBox = new HBox();
         final Label label = new Label(text);
@@ -74,6 +75,9 @@ public class JfxView {
         label.setStyle(USER_STYLE);
         hBox.setAlignment(Pos.BASELINE_LEFT);
         dialog.getChildren().add(hBox);
+        hBox.setOnMouseClicked(e -> {
+            dialog.getChildren().remove(hBox);
+        });
         // TODO: a click on this hbox should delete the message.
     }
     
@@ -128,6 +132,20 @@ public class JfxView {
             replyToUser(startQuestion + processor.firstToSecondPerson(matcher.group(1)) + " ?");
             return;
         }
+
+        pattern = Pattern.compile("(.*)\\?$", Pattern.CASE_INSENSITIVE);
+        matcher = pattern.matcher(normalizedText);
+        if (matcher.matches()) {
+            Random random = new Random();
+            if (random.nextBoolean()) {
+                replyToUser("Je vous renvoie la question.");
+                return;
+            } else {
+                replyToUser("Ici, c'est moi qui pose les questions.");
+                return;
+            }
+        }
+
         // Nothing clever to say, answer randomly
         if (random.nextBoolean()) {
             replyToUser("Il faut beau aujourd'hui, vous ne trouvez pas ?");
@@ -198,16 +216,20 @@ public class JfxView {
 
     private void searchText(final TextField text) {
         String currentSearchText = text.getText();
+        Pattern pattern;
+        Matcher matcher;
         if (currentSearchText == null) {
             searchTextLabel.setText("No active search");
         } else {
             searchTextLabel.setText("Searching for: " + currentSearchText);
         }
+        pattern = Pattern.compile(currentSearchText, Pattern.CASE_INSENSITIVE);
         List<HBox> toDelete = new ArrayList<>();
         for (Node hBox : dialog.getChildren()) {
             for (Node label : ((HBox) hBox).getChildren()) {
-                String t = ((Label) label).getText();
-                if (!t.contains(text.getText())) {
+                String message = ((Label) label).getText();
+                matcher = pattern.matcher(message);
+                if (!matcher.find()) {
                     // Can delete it right now, we're iterating over the list.
                     toDelete.add((HBox) hBox);
                 }
