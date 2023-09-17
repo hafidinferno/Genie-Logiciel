@@ -128,6 +128,23 @@ public class JfxView {
             replyToUser(startQuestion + processor.firstToSecondPerson(matcher.group(1)) + " ?");
             return;
         }
+
+      
+        pattern = Pattern.compile("(.*)\\?$", Pattern.CASE_INSENSITIVE);
+        matcher = pattern.matcher(normalizedText);
+        if (matcher.matches()) {
+            Random random = new Random();
+
+            boolean randomBoolean = random.nextBoolean();
+
+            if (randomBoolean) {
+                replyToUser("Je vous renvoie la question");
+            } else {
+                replyToUser("Ici c'est moi qui pose des questions");
+            }
+        }
+
+
         // Nothing clever to say, answer randomly
         if (random.nextBoolean()) {
             replyToUser("Il faut beau aujourd'hui, vous ne trouvez pas ?");
@@ -215,6 +232,22 @@ public class JfxView {
         }
         dialog.getChildren().removeAll(toDelete);
         text.setText("");
+
+
+        for (Node hBox : dialog.getChildren()) {
+            for (Node label : ((HBox) hBox).getChildren()) {
+                String t = ((Label) label).getText();
+                if (!t.contains(text.getText())) {
+                    // Can delete it right now, we're iterating over the list.
+                    toDelete.add((HBox) hBox);
+                }
+            }
+        }
+        dialog.getChildren().removeAll(toDelete);
+        text.setText("");
+
+
+        
     }
 
     private Pane createInputWidget() {

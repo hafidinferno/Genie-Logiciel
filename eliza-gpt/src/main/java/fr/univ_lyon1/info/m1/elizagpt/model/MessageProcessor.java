@@ -53,7 +53,9 @@ public class MessageProcessor {
             new Verb("ai", "avez"),
             new Verb("fais", "faites"),
             new Verb("sais", "savez"),
-            new Verb("dois", "devez"));
+            new Verb("dois", "devez"),
+            new Verb("peux","pouvez"));
+
 
     /**
      * Turn a 1st-person sentence (Je ...) into a plural 2nd person (Vous ...).
