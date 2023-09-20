@@ -74,6 +74,9 @@ public class JfxView {
         label.setStyle(USER_STYLE);
         hBox.setAlignment(Pos.BASELINE_LEFT);
         dialog.getChildren().add(hBox);
+        hBox.setOnMouseClicked(e -> {
+            dialog.getChildren().remove(hBox);
+        });
         // TODO: a click on this hbox should delete the message.
     }
     
@@ -130,7 +133,7 @@ public class JfxView {
         }
 
       
-        pattern = Pattern.compile("(.*)\\?$", Pattern.CASE_INSENSITIVE);
+        pattern = Pattern.compile(".*\\?$", Pattern.CASE_INSENSITIVE);
         matcher = pattern.matcher(normalizedText);
         if (matcher.matches()) {
             Random random = new Random();
@@ -142,6 +145,7 @@ public class JfxView {
             } else {
                 replyToUser("Ici c'est moi qui pose des questions");
             }
+            return;
         }
 
 
@@ -220,11 +224,15 @@ public class JfxView {
         } else {
             searchTextLabel.setText("Searching for: " + currentSearchText);
         }
+        Pattern pattern;
+        Matcher matcher;
+        pattern = Pattern.compile(currentSearchText+".*", Pattern.CASE_INSENSITIVE);
         List<HBox> toDelete = new ArrayList<>();
         for (Node hBox : dialog.getChildren()) {
             for (Node label : ((HBox) hBox).getChildren()) {
                 String t = ((Label) label).getText();
-                if (!t.contains(text.getText())) {
+                matcher = pattern.matcher(t);
+                if (!matcher.matches()) {
                     // Can delete it right now, we're iterating over the list.
                     toDelete.add((HBox) hBox);
                 }
@@ -232,23 +240,8 @@ public class JfxView {
         }
         dialog.getChildren().removeAll(toDelete);
         text.setText("");
-
-
-        for (Node hBox : dialog.getChildren()) {
-            for (Node label : ((HBox) hBox).getChildren()) {
-                String t = ((Label) label).getText();
-                if (!t.contains(text.getText())) {
-                    // Can delete it right now, we're iterating over the list.
-                    toDelete.add((HBox) hBox);
-                }
-            }
-        }
-        dialog.getChildren().removeAll(toDelete);
-        text.setText("");
-
-
-        
     }
+
 
     private Pane createInputWidget() {
         final Pane input = new HBox();
