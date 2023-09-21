@@ -34,7 +34,7 @@ public class JfxView {
      * Create the main view of the application.
      */
         // TODO: style error in the following line. Check that checkstyle finds it, and then fix it.
-        public JfxView(final Stage stage, final int width, final int height){
+        public JfxView(final Stage stage, final int width, final int height) {
         stage.setTitle("Eliza GPT");
 
         final VBox root = new VBox(10);
@@ -226,7 +226,7 @@ public class JfxView {
         }
         Pattern pattern;
         Matcher matcher;
-        pattern = Pattern.compile(currentSearchText+".*", Pattern.CASE_INSENSITIVE);
+        pattern = Pattern.compile(currentSearchText + ".*", Pattern.CASE_INSENSITIVE);
         List<HBox> toDelete = new ArrayList<>();
         for (Node hBox : dialog.getChildren()) {
             for (Node label : ((HBox) hBox).getChildren()) {
