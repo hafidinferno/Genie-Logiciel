@@ -14,4 +14,4 @@
 # Ignore les fichiers produits par Maven pour ne versionner que le code,
 # pas les executables ou les logs.
 log/
-
+target/
