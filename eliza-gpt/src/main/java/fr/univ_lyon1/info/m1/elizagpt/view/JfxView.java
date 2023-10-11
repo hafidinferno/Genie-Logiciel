@@ -133,18 +133,22 @@ public class JfxView {
             return;
         }
 
-        pattern = Pattern.compile("(.*)\\?$", Pattern.CASE_INSENSITIVE);
+      
+        pattern = Pattern.compile(".*\\?$", Pattern.CASE_INSENSITIVE);
         matcher = pattern.matcher(normalizedText);
         if (matcher.matches()) {
             Random random = new Random();
-            if (random.nextBoolean()) {
-                replyToUser("Je vous renvoie la question.");
-                return;
+
+            boolean randomBoolean = random.nextBoolean();
+
+            if (randomBoolean) {
+                replyToUser("Je vous renvoie la question");
             } else {
-                replyToUser("Ici, c'est moi qui pose les questions.");
-                return;
+                replyToUser("Ici c'est moi qui pose des questions");
             }
+            return;
         }
+
 
         // Nothing clever to say, answer randomly
         if (random.nextBoolean()) {
@@ -238,6 +242,7 @@ public class JfxView {
         dialog.getChildren().removeAll(toDelete);
         text.setText("");
     }
+
 
     private Pane createInputWidget() {
         final Pane input = new HBox();
