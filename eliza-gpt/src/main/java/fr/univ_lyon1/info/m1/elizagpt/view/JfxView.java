@@ -67,6 +67,7 @@ public class JfxView {
     static final String USER_STYLE = "-fx-background-color: #A0E0A0; " + BASE_STYLE;
     static final String ELIZA_STYLE = "-fx-background-color: #A0A0E0; " + BASE_STYLE;
 
+    //same code that the sendMessage function. We have to simplify both functions.
     private void replyToUser(final String text) {
         HBox hBox = new HBox();
         final Label label = new Label(text);
@@ -219,20 +220,20 @@ public class JfxView {
 
     private void searchText(final TextField text) {
         String currentSearchText = text.getText();
+        Pattern pattern;
+        Matcher matcher;
         if (currentSearchText == null) {
             searchTextLabel.setText("No active search");
         } else {
             searchTextLabel.setText("Searching for: " + currentSearchText);
         }
-        Pattern pattern;
-        Matcher matcher;
-        pattern = Pattern.compile(currentSearchText + ".*", Pattern.CASE_INSENSITIVE);
+        pattern = Pattern.compile(currentSearchText, Pattern.CASE_INSENSITIVE);
         List<HBox> toDelete = new ArrayList<>();
         for (Node hBox : dialog.getChildren()) {
             for (Node label : ((HBox) hBox).getChildren()) {
-                String t = ((Label) label).getText();
-                matcher = pattern.matcher(t);
-                if (!matcher.matches()) {
+                String message = ((Label) label).getText();
+                matcher = pattern.matcher(message);
+                if (!matcher.find()) {
                     // Can delete it right now, we're iterating over the list.
                     toDelete.add((HBox) hBox);
                 }

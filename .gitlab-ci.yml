@@ -21,4 +21,3 @@ junit:
     #- cat ~/.m2/settings.xml
   script:
     - cd eliza-gpt/ && mvn test --batch-mode
-
