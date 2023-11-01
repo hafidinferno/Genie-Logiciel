@@ -11,6 +11,7 @@ public final class Ia {
 	private final Pattern [] m_patterns;
 	private Matcher m_matcher;
 	private Random m_random;
+	private final int m_id;
 
 	public enum RespondType {
 		PRESENTATION,
@@ -32,6 +33,7 @@ public final class Ia {
 		m_random = new Random();
 		m_processor = new MessageProcessor();
 
+		m_id = 2;
 	}
 
 	public static Ia getInstance() {
@@ -54,24 +56,6 @@ public final class Ia {
 		}
 		
 		return responseChoice(i, userName);
-
-
-        // Nothing clever to say, answer randomly
-        // if (random.nextBoolean()) {
-        //     return "Il faut beau aujourd'hui, vous ne trouvez pas ?";
-        // }
-        // if (random.nextBoolean()) {
-        //     return "Je ne comprends pas.";
-        // }
-        // if (random.nextBoolean()) {
-        //     return "Hmmm, hmm ...";
-        // }
-        // // Default answer
-        // if (userName != null) {
-        //     return "Qu'est-ce qui vous fait dire cela, " + userName + " ?";
-        // } else {
-        //     return "Qu'est-ce qui vous fait dire cela ?";
-        // }
 	}
 
 	private String responseChoice(final int indice, final String userName) {
@@ -113,8 +97,16 @@ public final class Ia {
 					return "Je ne comprends pas.";
 				} else if(m_random.nextBoolean()) {
 					return "Hmmm, hmm ...";
+				} else if(userName != null) {
+					return "Qu'est-ce qui vous fait dire cela, " + userName + " ?";
+				} else {
+					return "Qu'est ce qui vous fait dire cela ?";
 				}
 			}
 		}
+	}
+
+	public final int getId() {
+		return m_id;
 	}
 }
