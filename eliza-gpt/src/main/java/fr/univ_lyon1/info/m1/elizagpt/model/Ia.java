@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 
 
 public final class Ia {
-	private Ia m_instance;
+	private static Ia m_instance;
 	private MessageProcessor m_processor;
 	private final Pattern [] m_patterns;
 	private Matcher m_matcher;
@@ -34,7 +34,7 @@ public final class Ia {
 
 	}
 
-	public Ia getInstance() {
+	public static Ia getInstance() {
 		if(m_instance == null) {
 			m_instance = new Ia();
 			return m_instance;
