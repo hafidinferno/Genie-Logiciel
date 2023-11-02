@@ -34,7 +34,7 @@ public class JfxView {
      * Create the main view of the application.
      */
         // TODO: style error in the following line. Check that checkstyle finds it, and then fix it.
-        public JfxView(final Stage stage, final int width, final int height) {
+    public JfxView(final Stage stage, final int width, final int height) {
         stage.setTitle("Eliza GPT");
 
         final VBox root = new VBox(10);
@@ -67,6 +67,7 @@ public class JfxView {
     static final String USER_STYLE = "-fx-background-color: #A0E0A0; " + BASE_STYLE;
     static final String ELIZA_STYLE = "-fx-background-color: #A0A0E0; " + BASE_STYLE;
 
+    //replyToUser doit se transformer en ``createDialogBox(final String text)`` et appeler le controlleur pour ajouter le message à la dao
     //same code that the sendMessage function. We have to simplify both functions.
     private void replyToUser(final String text) {
         HBox hBox = new HBox();
