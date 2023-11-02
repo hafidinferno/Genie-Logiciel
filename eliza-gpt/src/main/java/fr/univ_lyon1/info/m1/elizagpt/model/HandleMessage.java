@@ -2,30 +2,52 @@ package fr.univ_lyon1.info.m1.elizagpt.model;
 
 import javafx.scene.control.Label;
 
+/**
+ * Controlleur des messages.
+ */
 public class HandleMessage {
-	private final Dao m_dao;
-    private final Ia m_ia;
-    private final int m_userId;
+	private final Dao dao;
+    private final Ia ia;
+    private final int userId;
 
+    /**
+     * Constructeur de la classe.
+     */
 	public HandleMessage() {
-		m_ia = Ia.getInstance();
-        m_dao = Dao.getInstance();
-        m_userId = 1;
+		ia = Ia.getInstance();
+        dao = Dao.getInstance();
+        userId = 1;
 	}
 
-	
+	/**
+     * Fonction de réponse qui sera utilisée par l'utilissateur
+     * et l'IA.
+     * @param text message.
+     * @param id L'ID est celui de l'expéditeur.
+     */
 	public void reply(final String text, final int id) {
-        m_dao.addMessage(text, id);
+        dao.addMessage(text, id);
 	// TODO: a click on this hbox should delete the message.
 	}
 
+    /**
+     * Fonction de réponse de l'IA.
+     * @param text message envoyé par l'utilisateur.
+     */
     public void iaRespond(final String text) {
-        String iaResponse = m_ia.process(text, m_dao.getName());
-        reply(iaResponse, m_ia.getId());
+        String iaResponse = ia.process(text, dao.getName());
+        reply(iaResponse, ia.getId());
     }
 
-    public void SearchText(final String text, final Label searchTextLabel) {
-        m_dao.search(text, searchTextLabel);
+    /**
+     * Fonction de recherche via regex dans la database.
+	 * @param text chaine de caractère que l'on cherche
+	 * @param searchTextLabel label de notre barre de recherche.
+	 * il nous permet de notifier l'utilisateur si la recherche est en
+	 * cours ou non.
+     */
+    public void searchText(final String text, final Label searchTextLabel) {
+        dao.search(text, searchTextLabel);
 
     }
 }

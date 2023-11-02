@@ -7,31 +7,55 @@ import java.util.regex.Pattern;
 
 import javafx.scene.control.Label;
 
-
+/**
+ * Database de notre programme. Elle regroupe toutes les
+ * informations relatives à nos message.
+ */
 public final class Dao {
-	private static Dao m_instance;
-	private ArrayList<MessageId> m_messages;
+	private static Dao instance;
+	private ArrayList<MessageId> messages;
 
+	/**
+	 * Constructeur de la classe.
+	 */
 	public Dao() {
-		m_messages = new ArrayList<MessageId>();
+		messages = new ArrayList<MessageId>();
 	}
 
+	/**
+	 * Fonciton permettant de récupérer l'instance de la classe si
+	 * elle existe. Si elle n'existe pas, elle sera dans un premier
+	 * temps créée puis renvoyée.
+	 * @return instance de la classe.
+	 */
 	public static Dao getInstance() {
-		if(m_instance == null) {
-			m_instance = new Dao();
+		if (instance == null) {
+			instance = new Dao();
 		} 
-		return m_instance;
+		return instance;
 	}
 
+	/**
+	 * Ajoute à notre database un message ainsi que l'ID de
+	 * l'expéditeur.
+	 * @param message
+	 * @param id
+	 */
 	public void addMessage(final String message, final int id) {
-		m_messages.add(new MessageId(message, id));
+		messages.add(new MessageId(message, id));
 	}
 
-	public final String getName() {
-        for (MessageId message : m_messages) {
+	/**
+	 * Fonction permettant de chercher le nom de l'utilisateur.
+	 * @return La fonction retourne une le nom de l'utilisateur s'il existe
+	 * sinon null.
+	 */
+	public String getName() {
+        for (MessageId message : messages) {
 			if (message.getId() == 1) {
 				String text = message.getMessage();
-				Pattern pattern = Pattern.compile("Je m'appelle (.*)\\.", Pattern.CASE_INSENSITIVE);
+				Pattern pattern = Pattern.compile("Je m'appelle (.*)\\.",
+									Pattern.CASE_INSENSITIVE);
 				Matcher matcher = pattern.matcher(text);
 				if (matcher.matches()) {
 					return matcher.group(1);
@@ -41,6 +65,14 @@ public final class Dao {
         return null;
     }
 
+	/**
+	 * Recherche dans la database les messages correspondant au text qui lui
+	 * a été donné. cette recherche fonctionne à l'aide de regex.
+	 * @param text chaine de caractère que l'on cherche
+	 * @param searchTextLabel label de notre barre de recherche.
+	 * il nous permet de notifier l'utilisateur si la recherche est en
+	 * cours ou non.
+	 */
 	public void search(final String text, final Label searchTextLabel) {
         Pattern pattern;
         Matcher matcher;
@@ -51,7 +83,7 @@ public final class Dao {
         }
         pattern = Pattern.compile(text, Pattern.CASE_INSENSITIVE);
         ArrayList<MessageId> toDelete = new ArrayList<MessageId>();
-        for (MessageId tuple : m_messages) {
+        for (MessageId tuple : messages) {
 			String message = tuple.getMessage();
 			matcher = pattern.matcher(message);
 			if (!matcher.find()) {
@@ -59,7 +91,7 @@ public final class Dao {
 				toDelete.add(tuple);
 			}
         }
-        m_messages.removeAll(toDelete);
+        messages.removeAll(toDelete);
         //text.setText("");
     }
 }

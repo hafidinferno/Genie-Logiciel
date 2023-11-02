@@ -4,53 +4,71 @@ import java.util.Random;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-
+/**
+ * La classe Ia nous perme de gérer les différentes fonctionnalités
+ * qui composeront notre IA. Il est bon de savoir qu'une seule instance
+ * de cette classe doit être présente dans le programme.
+ */
 public final class Ia {
-	private static Ia m_instance;
-	private MessageProcessor m_processor;
-	private final Pattern [] m_patterns;
-	private Matcher m_matcher;
-	private Random m_random;
-	private final int m_id;
+	private static Ia instance;
+	private MessageProcessor processor;
+	private final Pattern[] patterns;
+	private Matcher matcher;
+	private Random random;
+	private final int id;
 
-	public enum RespondType {
-		PRESENTATION,
-		DEMANDE_DE_NOM,
-		LE_PLUS_,
-		COMMENCE_PAR_JE,
-		POSE_QUESTION
-	}
+	// Idée à discuter: cette enum devait permettre d'identifier les
+	// réponses possibles de notre IA.
+	// public enum RespondType {
+	// 	PRESENTATION,
+	// 	DEMANDE_DE_NOM,
+	// 	LE_PLUS_,
+	// 	COMMENCE_PAR_JE,
+	// 	POSE_QUESTION
+	// }
 
 	private Ia() {
-		m_patterns = new Pattern[5];
-		m_matcher = null;
-		m_patterns[0] = Pattern.compile(".*Je m'appelle (.*)\\.", Pattern.CASE_INSENSITIVE);
-		m_patterns[1] = Pattern.compile("Quel est mon nom \\?", Pattern.CASE_INSENSITIVE);
-		m_patterns[2] = Pattern.compile("Qui est le plus (.*) \\?", Pattern.CASE_INSENSITIVE);
-		m_patterns[3] = Pattern.compile("(Je .*)\\.", Pattern.CASE_INSENSITIVE);
-		m_patterns[4] = Pattern.compile(".*\\?$", Pattern.CASE_INSENSITIVE);
+		patterns = new Pattern[5];
+		matcher = null;
+		patterns[0] = Pattern.compile(".*Je m'appelle (.*)\\.", Pattern.CASE_INSENSITIVE);
+		patterns[1] = Pattern.compile("Quel est mon nom \\?", Pattern.CASE_INSENSITIVE);
+		patterns[2] = Pattern.compile("Qui est le plus (.*) \\?", Pattern.CASE_INSENSITIVE);
+		patterns[3] = Pattern.compile("(Je .*)\\.", Pattern.CASE_INSENSITIVE);
+		patterns[4] = Pattern.compile(".*\\?$", Pattern.CASE_INSENSITIVE);
 
-		m_random = new Random();
-		m_processor = new MessageProcessor();
+		random = new Random();
+		processor = new MessageProcessor();
 
-		m_id = 2;
+		id = 2;
 	}
 
+	/**
+	 * Fonction permettant de récupérer l'instance d'IA s'il en existe une
+	 * ou d'en créer une puis la récupérer.
+	 * @return Ia instance
+	 */
 	public static Ia getInstance() {
-		if(m_instance == null) {
-			m_instance = new Ia();
-			return m_instance;
+		if (instance == null) {
+			instance = new Ia();
+			return instance;
 		} else {
-			return m_instance;
+			return instance;
 		}
 	}
 	
+	/**
+	 * Fonction permettant de connaitre quel pattern est présent
+	 * dans le message de l'utilisateur afin de lui répondre.
+	 * @param normalizedText message de l'utilisateur.
+	 * @param userName Nom de l'utilisateur si le programme le connait
+	 * @return une réponse de type String.
+	 */
 	public String process(final String normalizedText, final String userName) {
 		int i = 0;
-		while(i < 5) {
+		while (i < 5) {
 
-			m_matcher = m_patterns[i].matcher(normalizedText);
-			if(m_matcher.matches()) {
+			matcher = patterns[i].matcher(normalizedText);
+			if (matcher.matches()) {
 				break;
 			}
 		}
@@ -60,53 +78,55 @@ public final class Ia {
 
 	private String responseChoice(final int indice, final String userName) {
 		switch (indice) {
-			case 0 -> {
-				return "Bonjour " + m_matcher.group(1) + ".";
-			}
-			case 1 -> {
-				if(userName != null) {
+			case 0 :
+				return "Bonjour " + matcher.group(1) + ".";
+			case 1 :
+				if (userName != null) {
 					return "Votre nom est " + userName + ".";
 				} else {
 					return "Je ne connais pas votre nom.";
 				}
-			}
-			case 2 -> {
-				return "Le plus " + m_matcher.group(1)
+			case 2 :
+				return "Le plus " + matcher.group(1)
                         + " est bien sûr votre enseignant de MIF01 !";
-			}
-			case 3 -> {
-				final String startQuestion = m_processor.pickRandom(new String[] {
+			case 3 :
+				final String startQuestion = processor.pickRandom(new String[] {
                 "Pourquoi dites-vous que ",
                 "Pourquoi pensez-vous que ",
                 "Êtes-vous sûr que ",
             	});
 
-				return startQuestion + m_processor.firstToSecondPerson(m_matcher.group(1)) + " ?";
-			}
-			case 4 -> {
-				if(m_random.nextBoolean()) {
+				return startQuestion 
+					+ processor.firstToSecondPerson(matcher.group(1))
+					+ " ?";
+			case 4 :
+				if (random.nextBoolean()) {
 					return "Je vous renvoie la question";
 				} else {
 					return "Ici c'est moi qui pose des questions";
 				}
-			}
-			default -> {
-				if (m_random.nextBoolean()) {
+			default :
+				if (random.nextBoolean()) {
 					return "Il faut beau aujourd'hui, vous ne trouvez pas ?";
-				} else if(m_random.nextBoolean()) {
+				} else if (random.nextBoolean()) {
 					return "Je ne comprends pas.";
-				} else if(m_random.nextBoolean()) {
+				} else if (random.nextBoolean()) {
 					return "Hmmm, hmm ...";
-				} else if(userName != null) {
-					return "Qu'est-ce qui vous fait dire cela, " + userName + " ?";
+				} else if (userName != null) {
+					return "Qu'est-ce qui vous fait dire cela, "
+					+ userName
+					+ " ?";
 				} else {
 					return "Qu'est ce qui vous fait dire cela ?";
 				}
-			}
 		}
 	}
 
-	public final int getId() {
-		return m_id;
+	/**
+	 * Fonction permettant de récupérer l'id de l'IA.
+	 * @return
+	 */
+	public int getId() {
+		return id;
 	}
 }
