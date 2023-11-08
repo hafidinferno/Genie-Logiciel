@@ -72,8 +72,9 @@ public final class Dao {
 	 * @param searchTextLabel label de notre barre de recherche.
 	 * il nous permet de notifier l'utilisateur si la recherche est en
 	 * cours ou non.
+	 * @return Une liste de messages qui match avec notre recherche.
 	 */
-	public void search(final String text, final Label searchTextLabel) {
+	public ArrayList<String> search(final String text, final Label searchTextLabel) {
         Pattern pattern;
         Matcher matcher;
         if (text == null || text.isEmpty()) {
@@ -82,16 +83,16 @@ public final class Dao {
             searchTextLabel.setText("Searching for: " + text);
         }
         pattern = Pattern.compile(text, Pattern.CASE_INSENSITIVE);
-        ArrayList<MessageId> toDelete = new ArrayList<MessageId>();
+        ArrayList<String> found = new ArrayList<String>();
         for (MessageId tuple : messages) {
 			String message = tuple.getMessage();
 			matcher = pattern.matcher(message);
 			if (!matcher.find()) {
 				// Can delete it right now, we're iterating over the list.
-				toDelete.add(tuple);
+				found.add(tuple.getMessage());
 			}
         }
-        messages.removeAll(toDelete);
+        return found;
         //text.setText("");
     }
 }
