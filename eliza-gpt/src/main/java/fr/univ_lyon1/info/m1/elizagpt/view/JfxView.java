@@ -3,6 +3,7 @@ package fr.univ_lyon1.info.m1.elizagpt.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.univ_lyon1.info.m1.elizagpt.model.MessageId;
 import fr.univ_lyon1.info.m1.elizagpt.model.MessageProcessor;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -81,6 +82,29 @@ public class JfxView {
             dialog.getChildren().remove(hBox);
         });
         // TODO: a click on this hbox should delete the message.
+    }
+
+    public void refreshView(ArrayList<MessageId> messageArray) {
+        dialog.getChildren().clear();
+        boolean isIa = true;
+        for (MessageId message:messageArray) {
+            HBox hBox = new HBox();
+            final Label label = new Label(message.getMessage());
+            hBox.getChildren().add(label);
+            if (isIa) {
+                label.setStyle(ELIZA_STYLE);
+            } else {
+                label.setStyle(USER_STYLE);
+            }
+            isIa = !isIa;
+            hBox.setAlignment(Pos.BASELINE_RIGHT);
+            dialog.getChildren().add(hBox);
+            hBox.setOnMouseClicked(e -> {
+                dialog.getChildren().remove(hBox);
+                //À rremplacer par un callback qui appel le controlleur et qui effectue bien l'action souhaitée
+                //ici : supprimer un message de notre appli et de la vue.
+            });
+        }
     }
     
     private void sendMessage(final String text) {
