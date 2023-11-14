@@ -23,7 +23,7 @@ public final class Dao {
 	}
 
 	/**
-	 * Fonciton permettant de récupérer l'instance de la classe si
+	 * Fonction permettant de récupérer l'instance de la classe si
 	 * elle existe. Si elle n'existe pas, elle sera dans un premier
 	 * temps créée puis renvoyée.
 	 * @return instance de la classe.

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.univ_lyon1.info.m1.elizagpt.model.MessageProcessor;
+import fr.univ_lyon1.info.m1.elizagpt.controlleur.Controleur;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -20,6 +21,7 @@ import java.util.regex.Pattern;
 import java.util.Random;
 
 
+
 /**
  * Main class of the View (GUI) of the application.
  */
@@ -30,9 +32,12 @@ public class JfxView {
     private Label searchTextLabel = null;
     private MessageProcessor processor = new MessageProcessor();
     private final Random random = new Random();
+    private Controleur controleur;
     /**
      * Create the main view of the application.
      */
+
+
         // TODO: style error in the following line. Check that checkstyle finds it, and then fix it.
     public JfxView(final Stage stage, final int width, final int height) {
         stage.setTitle("Eliza GPT");
@@ -69,8 +74,10 @@ public class JfxView {
 
     //replyToUser doit se transformer en ``createDialogBox(final String text)``
     // et appeler le controlleur pour ajouter le message à la dao
+
     //same code that the sendMessage function. We have to simplify both functions.
     private void replyToUser(final String text) {
+        controleur.handleUserReply(text);
         HBox hBox = new HBox();
         final Label label = new Label(text);
         hBox.getChildren().add(label);
@@ -244,6 +251,7 @@ public class JfxView {
         dialog.getChildren().removeAll(toDelete);
         text.setText("");
     }
+
 
 
     private Pane createInputWidget() {
