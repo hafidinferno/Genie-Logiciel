@@ -13,13 +13,13 @@ import javafx.scene.control.Label;
  */
 public final class Dao {
 	private static Dao instance;
-	private ArrayList<MessageId> messages;
+	private final ArrayList<DataMessage> messages;
 
 	/**
 	 * Constructeur de la classe.
 	 */
 	public Dao() {
-		messages = new ArrayList<MessageId>();
+		messages = new ArrayList<>();
 	}
 
 	/**
@@ -38,11 +38,11 @@ public final class Dao {
 	/**
 	 * Ajoute à notre database un message ainsi que l'ID de
 	 * l'expéditeur.
-	 * @param message
-	 * @param id
+	 * @param message texte de notre message
+	 * @param id Id de l'entité ayant écrit le message
 	 */
 	public void addMessage(final String message, final int id) {
-		messages.add(new MessageId(message, id));
+		messages.add(new DataMessage(message, id));
 	}
 
 	/**
@@ -51,9 +51,9 @@ public final class Dao {
 	 * sinon null.
 	 */
 	public String getName() {
-        for (MessageId message : messages) {
+        for (DataMessage message : messages) {
 			if (message.getId() == 1) {
-				String text = message.getMessage();
+				String text = message.getMessage().getText();
 				Pattern pattern = Pattern.compile("Je m'appelle (.*)\\.",
 									Pattern.CASE_INSENSITIVE);
 				Matcher matcher = pattern.matcher(text);
@@ -72,8 +72,9 @@ public final class Dao {
 	 * @param searchTextLabel label de notre barre de recherche.
 	 * il nous permet de notifier l'utilisateur si la recherche est en
 	 * cours ou non.
+	 * @return Une liste de messages qui match avec notre recherche.
 	 */
-	public void search(final String text, final Label searchTextLabel) {
+	public ArrayList<HashAndMessage> search(final String text, final Label searchTextLabel) {
         Pattern pattern;
         Matcher matcher;
         if (text == null || text.isEmpty()) {
@@ -82,16 +83,47 @@ public final class Dao {
             searchTextLabel.setText("Searching for: " + text);
         }
         pattern = Pattern.compile(text, Pattern.CASE_INSENSITIVE);
-        ArrayList<MessageId> toDelete = new ArrayList<MessageId>();
-        for (MessageId tuple : messages) {
-			String message = tuple.getMessage();
-			matcher = pattern.matcher(message);
+        ArrayList<HashAndMessage> found = new ArrayList<>();
+        for (DataMessage tuple : messages) {
+			HashAndMessage message = tuple.getMessage();
+			matcher = pattern.matcher(message.getText());
 			if (!matcher.find()) {
 				// Can delete it right now, we're iterating over the list.
-				toDelete.add(tuple);
+				found.add(tuple.getMessage());
 			}
         }
-        messages.removeAll(toDelete);
+        return found;
         //text.setText("");
     }
+
+	/**
+	 * Fonction permettant d'obtenir une liste de tuples
+	 * [message, hash].
+	 * @return une Arrayliste de couple [message,hash]
+	 */
+	public ArrayList<HashAndMessage> getAllMessage() {
+	ArrayList<HashAndMessage> res = new ArrayList<>();
+	for (DataMessage message : messages) {
+		res.add(message.getMessage());
+	}
+	return res;
+}
+
+	/**
+	 * La fonction permet de supprimer dans notre
+	 * base de données, les données relatives au
+	 * hash passé en paramètre.
+	 * @param hash Hash de la donnée que l'on souhaite
+	 *             supprimer.
+	 */
+	public void deleteMessage(final Integer hash) {
+		DataMessage deletedMessage = null;
+		for (DataMessage message : messages) {
+			if (message.getMessage().getHash().equals(hash)) {
+				messages.remove(message);
+				return;
+			}
+		}
+	}
+
 }
