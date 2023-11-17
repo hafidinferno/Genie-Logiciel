@@ -13,7 +13,7 @@ import javafx.scene.control.Label;
  */
 public final class Dao {
 	private static Dao instance;
-	private ArrayList<DataMessage> messages;
+	private final ArrayList<DataMessage> messages;
 
 	/**
 	 * Constructeur de la classe.
@@ -38,8 +38,8 @@ public final class Dao {
 	/**
 	 * Ajoute à notre database un message ainsi que l'ID de
 	 * l'expéditeur.
-	 * @param message
-	 * @param id
+	 * @param message texte de notre message
+	 * @param id Id de l'entité ayant écrit le message
 	 */
 	public void addMessage(final String message, final int id) {
 		messages.add(new DataMessage(message, id));
@@ -96,19 +96,29 @@ public final class Dao {
         //text.setText("");
     }
 
-public ArrayList<HashAndMessage> getAllMessage() {
+	/**
+	 * Fonction permettant d'obtenir une liste de tuples
+	 * [message, hash].
+	 * @return une Arrayliste de couple [message,hash]
+	 */
+	public ArrayList<HashAndMessage> getAllMessage() {
 	ArrayList<HashAndMessage> res = new ArrayList<>();
-	for (DataMessage message :
-			messages) {
+	for (DataMessage message : messages) {
 		res.add(message.getMessage());
 	}
 	return res;
 }
 
-	public void deleteMessage(Integer hash) {
+	/**
+	 * La fonction permet de supprimer dans notre
+	 * base de données, les données relatives au
+	 * hash passé en paramètre.
+	 * @param hash Hash de la donnée que l'on souhaite
+	 *             supprimer.
+	 */
+	public void deleteMessage(final Integer hash) {
 		DataMessage deletedMessage = null;
-		for (DataMessage message :
-				messages) {
+		for (DataMessage message : messages) {
 			if (message.getMessage().getHash().equals(hash)) {
 				messages.remove(message);
 				return;
