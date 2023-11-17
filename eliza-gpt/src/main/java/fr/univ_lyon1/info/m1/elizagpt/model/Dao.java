@@ -13,13 +13,13 @@ import javafx.scene.control.Label;
  */
 public final class Dao {
 	private static Dao instance;
-	private ArrayList<MessageId> messages;
+	private ArrayList<DataMessage> messages;
 
 	/**
 	 * Constructeur de la classe.
 	 */
 	public Dao() {
-		messages = new ArrayList<MessageId>();
+		messages = new ArrayList<>();
 	}
 
 	/**
@@ -42,7 +42,7 @@ public final class Dao {
 	 * @param id
 	 */
 	public void addMessage(final String message, final int id) {
-		messages.add(new MessageId(message, id));
+		messages.add(new DataMessage(message, id));
 	}
 
 	/**
@@ -51,9 +51,9 @@ public final class Dao {
 	 * sinon null.
 	 */
 	public String getName() {
-        for (MessageId message : messages) {
+        for (DataMessage message : messages) {
 			if (message.getId() == 1) {
-				String text = message.getMessage();
+				String text = message.getMessage().getText();
 				Pattern pattern = Pattern.compile("Je m'appelle (.*)\\.",
 									Pattern.CASE_INSENSITIVE);
 				Matcher matcher = pattern.matcher(text);
@@ -74,7 +74,7 @@ public final class Dao {
 	 * cours ou non.
 	 * @return Une liste de messages qui match avec notre recherche.
 	 */
-	public ArrayList<String> search(final String text, final Label searchTextLabel) {
+	public ArrayList<HashAndMessage> search(final String text, final Label searchTextLabel) {
         Pattern pattern;
         Matcher matcher;
         if (text == null || text.isEmpty()) {
@@ -83,10 +83,10 @@ public final class Dao {
             searchTextLabel.setText("Searching for: " + text);
         }
         pattern = Pattern.compile(text, Pattern.CASE_INSENSITIVE);
-        ArrayList<String> found = new ArrayList<String>();
-        for (MessageId tuple : messages) {
-			String message = tuple.getMessage();
-			matcher = pattern.matcher(message);
+        ArrayList<HashAndMessage> found = new ArrayList<>();
+        for (DataMessage tuple : messages) {
+			HashAndMessage message = tuple.getMessage();
+			matcher = pattern.matcher(message.getText());
 			if (!matcher.find()) {
 				// Can delete it right now, we're iterating over the list.
 				found.add(tuple.getMessage());
@@ -95,4 +95,25 @@ public final class Dao {
         return found;
         //text.setText("");
     }
+
+public ArrayList<HashAndMessage> getAllMessage() {
+	ArrayList<HashAndMessage> res = new ArrayList<>();
+	for (DataMessage message :
+			messages) {
+		res.add(message.getMessage());
+	}
+	return res;
+}
+
+	public void deleteMessage(Integer hash) {
+		DataMessage deletedMessage = null;
+		for (DataMessage message :
+				messages) {
+			if (message.getMessage().getHash().equals(hash)) {
+				messages.remove(message);
+				return;
+			}
+		}
+	}
+
 }

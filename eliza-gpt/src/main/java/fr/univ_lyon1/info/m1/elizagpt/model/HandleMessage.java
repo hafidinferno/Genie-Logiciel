@@ -1,7 +1,6 @@
 package fr.univ_lyon1.info.m1.elizagpt.model;
 
 import javafx.scene.control.Label;
-
 import java.util.ArrayList;
 
 /**
@@ -46,10 +45,10 @@ public class HandleMessage {
 	 * @param text chaine de caractère que l'on cherche
 	 * @param searchTextLabel label de notre barre de recherche.
 	 * il nous permet de notifier l'utilisateur si la recherche est en
-	 * cours ou non.
+	 * cours ou non et l'execution.
      * @return Une liste de messages qui match avec notre recherche.
      */
-    public ArrayList<String> searchText(final String text, final Label searchTextLabel) {
+    public ArrayList<HashAndMessage> searchText(final String text, final Label searchTextLabel) {
         return dao.search(text, searchTextLabel);
     }
 }
