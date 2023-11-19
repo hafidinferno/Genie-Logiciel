@@ -1,12 +1,12 @@
 package fr.univ_lyon1.info.m1.elizagpt.view;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import fr.univ_lyon1.info.m1.elizagpt.model.MessageId;
+
+import fr.univ_lyon1.info.m1.elizagpt.controlleur.Controleur;
+import fr.univ_lyon1.info.m1.elizagpt.model.HashAndMessage;
 import fr.univ_lyon1.info.m1.elizagpt.model.MessageProcessor;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,8 +16,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.Random;
 
 
@@ -31,6 +29,7 @@ public class JfxView {
     private Label searchTextLabel = null;
     private MessageProcessor processor = new MessageProcessor();
     private final Random random = new Random();
+    private final Controleur controleur;
     /**
      * Create the main view of the application.
      */
@@ -38,6 +37,7 @@ public class JfxView {
     public JfxView(final Stage stage, final int width, final int height) {
         stage.setTitle("Eliza GPT");
 
+        controleur = new Controleur();
         final VBox root = new VBox(10);
 
         final Pane search = createSearchWidget();
@@ -84,12 +84,12 @@ public class JfxView {
         // TODO: a click on this hbox should delete the message.
     }
 
-    public void refreshView(ArrayList<MessageId> messageArray) {
+    public void refreshView(ArrayList<HashAndMessage> messageArray) {
         dialog.getChildren().clear();
-        boolean isIa = true;
-        for (MessageId message:messageArray) {
+        boolean isIa = true; //à modifier
+        for (HashAndMessage message : messageArray) {
             HBox hBox = new HBox();
-            final Label label = new Label(message.getMessage());
+            final Label label = new Label(message.getText());
             hBox.getChildren().add(label);
             if (isIa) {
                 label.setStyle(ELIZA_STYLE);
@@ -100,123 +100,11 @@ public class JfxView {
             hBox.setAlignment(Pos.BASELINE_RIGHT);
             dialog.getChildren().add(hBox);
             hBox.setOnMouseClicked(e -> {
-                dialog.getChildren().remove(hBox);
+                Controleur.deleteMessage(message.getHash());
                 //À rremplacer par un callback qui appel le controlleur et qui effectue bien l'action souhaitée
                 //ici : supprimer un message de notre appli et de la vue.
             });
         }
-    }
-    
-    private void sendMessage(final String text) {
-        HBox hBox = new HBox();
-        final Label label = new Label(text);
-        hBox.getChildren().add(label);
-        label.setStyle(ELIZA_STYLE);
-        hBox.setAlignment(Pos.BASELINE_RIGHT);
-        dialog.getChildren().add(hBox);
-        hBox.setOnMouseClicked(e -> {
-            dialog.getChildren().remove(hBox);
-        });
-    
-        String normalizedText = processor.normalize(text);
-    
-        Pattern pattern;
-        Matcher matcher;
-    
-        // First, try to answer specifically to what the user said
-        pattern = Pattern.compile(".*Je m'appelle (.*)\\.", Pattern.CASE_INSENSITIVE);
-        matcher = pattern.matcher(normalizedText);
-        if (matcher.matches()) {
-            replyToUser("Bonjour " + matcher.group(1) + ".");
-            return;
-        }
-        pattern = Pattern.compile("Quel est mon nom \\?", Pattern.CASE_INSENSITIVE);
-        matcher = pattern.matcher(normalizedText);
-        if (matcher.matches()) {
-            if (getName() != null) {
-                replyToUser("Votre nom est " + getName() + ".");
-            } else {
-                replyToUser("Je ne connais pas votre nom.");
-            }
-            return;
-        }
-        pattern = Pattern.compile("Qui est le plus (.*) \\?", Pattern.CASE_INSENSITIVE);
-        matcher = pattern.matcher(normalizedText);
-        if (matcher.matches()) {
-            replyToUser("Le plus " + matcher.group(1)
-                        + " est bien sûr votre enseignant de MIF01 !");
-            return;
-        }
-        pattern = Pattern.compile("(Je .*)\\.", Pattern.CASE_INSENSITIVE);
-        matcher = pattern.matcher(normalizedText);
-        if (matcher.matches()) {
-            final String startQuestion = processor.pickRandom(new String[] {
-                "Pourquoi dites-vous que ",
-                "Pourquoi pensez-vous que ",
-                "Êtes-vous sûr que ",
-            });
-            replyToUser(startQuestion + processor.firstToSecondPerson(matcher.group(1)) + " ?");
-            return;
-        }
-
-      
-        pattern = Pattern.compile(".*\\?$", Pattern.CASE_INSENSITIVE);
-        matcher = pattern.matcher(normalizedText);
-        if (matcher.matches()) {
-            Random random = new Random();
-
-            boolean randomBoolean = random.nextBoolean();
-
-            if (randomBoolean) {
-                replyToUser("Je vous renvoie la question");
-            } else {
-                replyToUser("Ici c'est moi qui pose des questions");
-            }
-            return;
-        }
-
-
-        // Nothing clever to say, answer randomly
-        if (random.nextBoolean()) {
-            replyToUser("Il faut beau aujourd'hui, vous ne trouvez pas ?");
-            return;
-        }
-        if (random.nextBoolean()) {
-            replyToUser("Je ne comprends pas.");
-            return;
-        }
-        if (random.nextBoolean()) {
-            replyToUser("Hmmm, hmm ...");
-            return;
-        }
-        // Default answer
-        if (getName() != null) {
-            replyToUser("Qu'est-ce qui vous fait dire cela, " + getName() + " ?");
-        } else {
-            replyToUser("Qu'est-ce qui vous fait dire cela ?");
-        }
-    }
-
-    /**
-    * Extract the name of the user from the dialog.
-    * TODO: this totally breaks the MVC pattern, never, ever, EVER do that.
-    * @return
-    */
-    private String getName() {
-        for (Node hBox : dialog.getChildren()) {
-            for (Node label : ((HBox) hBox).getChildren()) {
-                if (((Label) label).getStyle().equals("-fx-background-color: #A0E0A0;")) {
-                    String text = ((Label) label).getText();
-                    Pattern pattern = Pattern.compile("Je m'appelle (.*)\\.",
-                                                      Pattern.CASE_INSENSITIVE);
-                    Matcher matcher = pattern.matcher(text);
-                    if (matcher.matches()) {
-                        return matcher.group(1);
-                    }
-                }
-            }
-        }
-        return null;
     }
 
     private Pane createSearchWidget() {
@@ -226,12 +114,12 @@ public class JfxView {
         secondLine.setAlignment(Pos.BASELINE_LEFT);
         searchText = new TextField();
         searchText.setOnAction(e -> {
-            searchText(searchText);
+            controleur.searchText(searchText);
         });
         firstLine.getChildren().add(searchText);
         final Button send = new Button("Search");
         send.setOnAction(e -> {
-            searchText(searchText);
+            controleur.searchText(searchText);
         });
         searchTextLabel = new Label();
         final Button undo = new Button("Undo search");
@@ -244,42 +132,17 @@ public class JfxView {
         return input;
     }
 
-    private void searchText(final TextField text) {
-        String currentSearchText = text.getText();
-        Pattern pattern;
-        Matcher matcher;
-        if (currentSearchText == null) {
-            searchTextLabel.setText("No active search");
-        } else {
-            searchTextLabel.setText("Searching for: " + currentSearchText);
-        }
-        pattern = Pattern.compile(currentSearchText, Pattern.CASE_INSENSITIVE);
-        List<HBox> toDelete = new ArrayList<>();
-        for (Node hBox : dialog.getChildren()) {
-            for (Node label : ((HBox) hBox).getChildren()) {
-                String message = ((Label) label).getText();
-                matcher = pattern.matcher(message);
-                if (!matcher.find()) {
-                    // Can delete it right now, we're iterating over the list.
-                    toDelete.add((HBox) hBox);
-                }
-            }
-        }
-        dialog.getChildren().removeAll(toDelete);
-        text.setText("");
-    }
-
 
     private Pane createInputWidget() {
         final Pane input = new HBox();
         text = new TextField();
         text.setOnAction(e -> {
-            sendMessage(text.getText());
+            controleur.sendMessage(text.getText());
             text.setText("");
         });
         final Button send = new Button("Send");
         send.setOnAction(e -> {
-            sendMessage(text.getText());
+            controleur.sendMessage(text.getText());
             text.setText("");
         });
         input.getChildren().addAll(text, send);
