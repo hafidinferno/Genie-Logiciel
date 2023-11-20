@@ -29,8 +29,10 @@ public class HandleMessage {
      * @param id L'ID est celui de l'expéditeur.
      */
 	public void reply(final String text, final int id) {
+
         dao.addMessage(text, id);
 	// TODO: a click on this hbox should delete the message.
+
 	}
 
     /**
