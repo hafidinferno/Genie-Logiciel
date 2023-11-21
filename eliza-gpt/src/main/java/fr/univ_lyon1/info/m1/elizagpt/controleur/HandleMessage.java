@@ -4,8 +4,6 @@ import fr.univ_lyon1.info.m1.elizagpt.model.HashAndMessage;
 import javafx.scene.control.Label;
 import fr.univ_lyon1.info.m1.elizagpt.model.Ia;
 import fr.univ_lyon1.info.m1.elizagpt.model.Dao;
-import fr.univ_lyon1.info.m1.elizagpt.model.HashAndMessage;
-/* il y'avait un import ici de la classe MessageId qui servait à rien */
 import java.util.ArrayList;
 
 /**

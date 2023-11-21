@@ -44,6 +44,7 @@ public class JfxView {
         stage.setTitle("Eliza GPT");
 
         final VBox root = new VBox(10);
+        controleur = new Controleur(this);
 
         final Pane search = createSearchWidget();
         root.getChildren().add(search);
@@ -79,13 +80,9 @@ public class JfxView {
 
     //same code that the sendMessage function. We have to simplify both functions.
     private void replyToUser(final String text) {
-        if (text != null && !text.trim().isEmpty()) {
-            controleur.setMessage(text);
-            controleur.stockMessage(text);
-            controleur.handleUserReply(text);
-        }
+        controleur.handleUserReply(text);
 
-        HBox hBox = new HBox();
+        /*HBox hBox = new HBox();
         final Label label = new Label(text);
         hBox.getChildren().add(label);
         label.setStyle(USER_STYLE);
@@ -93,12 +90,11 @@ public class JfxView {
         dialog.getChildren().add(hBox);
         hBox.setOnMouseClicked(e -> {
             dialog.getChildren().remove(hBox);
-        });
+        });*/
         // TODO: a click on this hbox should delete the message.
     }
 
     private void sendMessage(final String text) {
-        controleur.updateView();
         HBox hBox = new HBox();
         final Label label = new Label(text);
         hBox.getChildren().add(label);

@@ -10,8 +10,11 @@ public final class Controleur {
     private final HandleMessage handleMessage;
     private JfxView view;
 
-    // Private constructor
-    private Controleur(final JfxView view) {
+    /**
+     * Constructeur de la classe Controleur.
+     * @param view Vue associée à ce controleur.
+     */
+    public Controleur(final JfxView view) {
         this.handleMessage = new HandleMessage();
         this.view = view;
     }
