@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.univ_lyon1.info.m1.elizagpt.model.MessageProcessor;
-import fr.univ_lyon1.info.m1.elizagpt.controlleur.Controleur;
+import fr.univ_lyon1.info.m1.elizagpt.controleur.Controleur;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
