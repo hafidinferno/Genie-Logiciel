@@ -4,6 +4,7 @@ import fr.univ_lyon1.info.m1.elizagpt.model.HashAndMessage;
 import javafx.scene.control.Label;
 import fr.univ_lyon1.info.m1.elizagpt.model.Ia;
 import fr.univ_lyon1.info.m1.elizagpt.model.Dao;
+import fr.univ_lyon1.info.m1.elizagpt.model.HashAndMessage;
 /* il y'avait un import ici de la classe MessageId qui servait à rien */
 import java.util.ArrayList;
 
@@ -31,8 +32,10 @@ public class HandleMessage {
      * @param id L'ID est celui de l'expéditeur.
      */
 	public void reply(final String text, final int id) {
+
         dao.addMessage(text, id);
 	// TODO: a click on this hbox should delete the message.
+
 	}
 
     /**
