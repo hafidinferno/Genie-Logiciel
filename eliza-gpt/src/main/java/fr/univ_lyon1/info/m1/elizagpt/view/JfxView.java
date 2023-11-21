@@ -33,12 +33,13 @@ public class JfxView {
     private MessageProcessor processor = new MessageProcessor();
     private final Random random = new Random();
     private Controleur controleur;
+
     /**
      * Create the main view of the application.
      */
 
 
-        // TODO: style error in the following line. Check that checkstyle finds it, and then fix it.
+    // TODO: style error in the following line. Check that checkstyle finds it, and then fix it.
     public JfxView(final Stage stage, final int width, final int height) {
         stage.setTitle("Eliza GPT");
 
@@ -64,6 +65,7 @@ public class JfxView {
         stage.setScene(scene);
         text.requestFocus();
         stage.show();
+
     }
 
     static final String BASE_STYLE = "-fx-padding: 8px; "
@@ -77,7 +79,12 @@ public class JfxView {
 
     //same code that the sendMessage function. We have to simplify both functions.
     private void replyToUser(final String text) {
-        controleur.handleUserReply(text);
+        if (text != null && !text.trim().isEmpty()) {
+            controleur.setMessage(text);
+            controleur.stockMessage(text);
+            controleur.handleUserReply(text);
+        }
+
         HBox hBox = new HBox();
         final Label label = new Label(text);
         hBox.getChildren().add(label);
@@ -89,8 +96,9 @@ public class JfxView {
         });
         // TODO: a click on this hbox should delete the message.
     }
-    
+
     private void sendMessage(final String text) {
+        controleur.updateView();
         HBox hBox = new HBox();
         final Label label = new Label(text);
         hBox.getChildren().add(label);
@@ -100,12 +108,12 @@ public class JfxView {
         hBox.setOnMouseClicked(e -> {
             dialog.getChildren().remove(hBox);
         });
-    
+
         String normalizedText = processor.normalize(text);
-    
+
         Pattern pattern;
         Matcher matcher;
-    
+
         // First, try to answer specifically to what the user said
         pattern = Pattern.compile(".*Je m'appelle (.*)\\.", Pattern.CASE_INSENSITIVE);
         matcher = pattern.matcher(normalizedText);
@@ -127,22 +135,22 @@ public class JfxView {
         matcher = pattern.matcher(normalizedText);
         if (matcher.matches()) {
             replyToUser("Le plus " + matcher.group(1)
-                        + " est bien sûr votre enseignant de MIF01 !");
+                    + " est bien sûr votre enseignant de MIF01 !");
             return;
         }
         pattern = Pattern.compile("(Je .*)\\.", Pattern.CASE_INSENSITIVE);
         matcher = pattern.matcher(normalizedText);
         if (matcher.matches()) {
-            final String startQuestion = processor.pickRandom(new String[] {
-                "Pourquoi dites-vous que ",
-                "Pourquoi pensez-vous que ",
-                "Êtes-vous sûr que ",
+            final String startQuestion = processor.pickRandom(new String[]{
+                    "Pourquoi dites-vous que ",
+                    "Pourquoi pensez-vous que ",
+                    "Êtes-vous sûr que ",
             });
             replyToUser(startQuestion + processor.firstToSecondPerson(matcher.group(1)) + " ?");
             return;
         }
 
-      
+
         pattern = Pattern.compile(".*\\?$", Pattern.CASE_INSENSITIVE);
         matcher = pattern.matcher(normalizedText);
         if (matcher.matches()) {
@@ -181,17 +189,18 @@ public class JfxView {
     }
 
     /**
-    * Extract the name of the user from the dialog.
-    * TODO: this totally breaks the MVC pattern, never, ever, EVER do that.
-    * @return
-    */
+     * Extract the name of the user from the dialog.
+     * TODO: this totally breaks the MVC pattern, never, ever, EVER do that.
+     *
+     * @return
+     */
     private String getName() {
         for (Node hBox : dialog.getChildren()) {
             for (Node label : ((HBox) hBox).getChildren()) {
                 if (((Label) label).getStyle().equals("-fx-background-color: #A0E0A0;")) {
                     String text = ((Label) label).getText();
                     Pattern pattern = Pattern.compile("Je m'appelle (.*)\\.",
-                                                      Pattern.CASE_INSENSITIVE);
+                            Pattern.CASE_INSENSITIVE);
                     Matcher matcher = pattern.matcher(text);
                     if (matcher.matches()) {
                         return matcher.group(1);
@@ -253,7 +262,6 @@ public class JfxView {
     }
 
 
-
     private Pane createInputWidget() {
         final Pane input = new HBox();
         text = new TextField();
@@ -269,4 +277,7 @@ public class JfxView {
         input.getChildren().addAll(text, send);
         return input;
     }
+
+
+
 }

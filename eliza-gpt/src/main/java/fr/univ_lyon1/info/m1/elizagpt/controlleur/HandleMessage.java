@@ -3,7 +3,9 @@ package fr.univ_lyon1.info.m1.elizagpt.controlleur;
 import javafx.scene.control.Label;
 import fr.univ_lyon1.info.m1.elizagpt.model.Ia;
 import fr.univ_lyon1.info.m1.elizagpt.model.Dao;
+import fr.univ_lyon1.info.m1.elizagpt.model.HashAndMessage;
 /* il y'avait un import ici de la classe MessageId qui servait à rien */
+import java.util.ArrayList;
 
 /**
  * Controlleur des messages.
@@ -49,10 +51,10 @@ public class HandleMessage {
 	 * @param text chaine de caractère que l'on cherche
 	 * @param searchTextLabel label de notre barre de recherche.
 	 * il nous permet de notifier l'utilisateur si la recherche est en
-	 * cours ou non.
+	 * cours ou non et l'execution.
+     * @return Une liste de messages qui match avec notre recherche.
      */
-    public void searchText(final String text, final Label searchTextLabel) {
-        dao.search(text, searchTextLabel);
-
+    public ArrayList<HashAndMessage> searchText(final String text, final Label searchTextLabel) {
+        return dao.search(text, searchTextLabel);
     }
 }
