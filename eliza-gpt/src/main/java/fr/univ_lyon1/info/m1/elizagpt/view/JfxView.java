@@ -3,7 +3,7 @@ package fr.univ_lyon1.info.m1.elizagpt.view;
 import java.util.ArrayList;
 
 
-import fr.univ_lyon1.info.m1.elizagpt.controlleur.Controleur;
+import fr.univ_lyon1.info.m1.elizagpt.controleur.Controleur;
 import fr.univ_lyon1.info.m1.elizagpt.model.HashAndMessage;
 import fr.univ_lyon1.info.m1.elizagpt.model.MessageProcessor;
 import javafx.geometry.Pos;
@@ -84,7 +84,14 @@ public class JfxView {
         // TODO: a click on this hbox should delete the message.
     }
 
-    public void refreshView(ArrayList<HashAndMessage> messageArray) {
+    /**
+     * Cette fonction permet de reconstruire notre vue
+     * lorsqu'un nouveau message a été envoyer ou plus
+     * généralement quand il y un changement lié à notre base
+     * de données.
+     * @param messageArray
+     */
+    public void refreshView(final ArrayList<HashAndMessage> messageArray) {
         dialog.getChildren().clear();
         boolean isIa = true; //à modifier
         for (HashAndMessage message : messageArray) {
@@ -100,8 +107,9 @@ public class JfxView {
             hBox.setAlignment(Pos.BASELINE_RIGHT);
             dialog.getChildren().add(hBox);
             hBox.setOnMouseClicked(e -> {
-                Controleur.deleteMessage(message.getHash());
-                //À rremplacer par un callback qui appel le controlleur et qui effectue bien l'action souhaitée
+                //Controleur.deleteMessage(message.getHash());
+                //À rremplacer par un callback qui appel le controlleur
+                // et qui effectue bien l'action souhaitée
                 //ici : supprimer un message de notre appli et de la vue.
             });
         }
@@ -114,12 +122,12 @@ public class JfxView {
         secondLine.setAlignment(Pos.BASELINE_LEFT);
         searchText = new TextField();
         searchText.setOnAction(e -> {
-            controleur.searchText(searchText);
+            //controleur.searchText(searchText);
         });
         firstLine.getChildren().add(searchText);
         final Button send = new Button("Search");
         send.setOnAction(e -> {
-            controleur.searchText(searchText);
+            //controleur.searchText(searchText);
         });
         searchTextLabel = new Label();
         final Button undo = new Button("Undo search");
