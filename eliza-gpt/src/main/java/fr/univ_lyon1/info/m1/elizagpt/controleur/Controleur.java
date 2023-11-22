@@ -22,7 +22,7 @@ public final class Controleur {
     /** la methode handleUserREply s'occupe de stocker le message dans la Dao.
      * puis le traiter avec la fonction iaRespond de la classe handleMessage
      * puis l'afficher dans la vue.
-     * @param message
+     * @param message chaine de caractère du message
      */
     public void handleUserReply(final String message) {
         // Store the message in the database
