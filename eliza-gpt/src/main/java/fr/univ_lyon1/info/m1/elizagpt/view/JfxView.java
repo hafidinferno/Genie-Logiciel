@@ -1,7 +1,10 @@
 package fr.univ_lyon1.info.m1.elizagpt.view;
 
 import java.util.ArrayList;
+
+
 import fr.univ_lyon1.info.m1.elizagpt.controleur.Controleur;
+import fr.univ_lyon1.info.m1.elizagpt.controleur.HandleMessage;
 import fr.univ_lyon1.info.m1.elizagpt.model.HashAndMessage;
 import fr.univ_lyon1.info.m1.elizagpt.model.MessageProcessor;
 import javafx.geometry.Pos;
@@ -23,19 +26,21 @@ import java.util.Random;
 public class JfxView {
     private final VBox dialog;
     private TextField text = null;
-
     private TextField searchText = null;
     private Label searchTextLabel = null;
     private MessageProcessor processor = new MessageProcessor();
     private final Random random = new Random();
     private final Controleur controleur;
+    private final HandleMessage handleMessage = null;
+    private final JfxView jfxView = null;
     /**
      * Create the main view of the application.
      */
-        // TODO: style error in the following line. Check that checkstyle finds it, and then fix it.
+    // TODO: style error in the following line. Check that checkstyle finds it, and then fix it.
     public JfxView(final Stage stage, final int width, final int height) {
         stage.setTitle("Eliza GPT");
 
+        controleur = new Controleur(handleMessage, jfxView);
         final VBox root = new VBox(10);
 
         final Pane search = createSearchWidget();
@@ -70,13 +75,7 @@ public class JfxView {
     // et appeler le controlleur pour ajouter le message à la dao
     //same code that the sendMessage function. We have to simplify both functions.
     private void replyToUser(final String text) {
-        controleur.handleUserReply(text);
-<<<<<<< HEAD
         HBox hBox = new HBox();
-=======
-
-        /*HBox hBox = new HBox();
->>>>>>> 0bf42804e99869aca1a58b7dcfff8ae90baebe48
         final Label label = new Label(text);
         hBox.getChildren().add(label);
         label.setStyle(USER_STYLE);
@@ -84,104 +83,10 @@ public class JfxView {
         dialog.getChildren().add(hBox);
         hBox.setOnMouseClicked(e -> {
             dialog.getChildren().remove(hBox);
-        });*/
+        });
         // TODO: a click on this hbox should delete the message.
     }
 
-<<<<<<< HEAD
-    private void sendMessage(final String text) {
-
-        HBox hBox = new HBox();
-        final Label label = new Label(text);
-        hBox.getChildren().add(label);
-        label.setStyle(ELIZA_STYLE);
-        hBox.setAlignment(Pos.BASELINE_RIGHT);
-        dialog.getChildren().add(hBox);
-        hBox.setOnMouseClicked(e -> {
-            dialog.getChildren().remove(hBox);
-        });
-
-        String normalizedText = processor.normalize(text);
-
-        Pattern pattern;
-        Matcher matcher;
-
-        // First, try to answer specifically to what the user said
-        pattern = Pattern.compile(".*Je m'appelle (.*)\\.", Pattern.CASE_INSENSITIVE);
-        matcher = pattern.matcher(normalizedText);
-        if (matcher.matches()) {
-            replyToUser("Bonjour " + matcher.group(1) + ".");
-            return;
-        }
-        pattern = Pattern.compile("Quel est mon nom \\?", Pattern.CASE_INSENSITIVE);
-        matcher = pattern.matcher(normalizedText);
-        if (matcher.matches()) {
-            if (getName() != null) {
-                replyToUser("Votre nom est " + getName() + ".");
-            } else {
-                replyToUser("Je ne connais pas votre nom.");
-            }
-            return;
-        }
-        pattern = Pattern.compile("Qui est le plus (.*) \\?", Pattern.CASE_INSENSITIVE);
-        matcher = pattern.matcher(normalizedText);
-        if (matcher.matches()) {
-            replyToUser("Le plus " + matcher.group(1)
-                    + " est bien sûr votre enseignant de MIF01 !");
-            return;
-        }
-        pattern = Pattern.compile("(Je .*)\\.", Pattern.CASE_INSENSITIVE);
-        matcher = pattern.matcher(normalizedText);
-        if (matcher.matches()) {
-            final String startQuestion = processor.pickRandom(new String[]{
-                    "Pourquoi dites-vous que ",
-                    "Pourquoi pensez-vous que ",
-                    "Êtes-vous sûr que ",
-            });
-            replyToUser(startQuestion + processor.firstToSecondPerson(matcher.group(1)) + " ?");
-            return;
-        }
-
-
-        pattern = Pattern.compile(".*\\?$", Pattern.CASE_INSENSITIVE);
-        matcher = pattern.matcher(normalizedText);
-        if (matcher.matches()) {
-            Random random = new Random();
-
-            boolean randomBoolean = random.nextBoolean();
-
-            if (randomBoolean) {
-                replyToUser("Je vous renvoie la question");
-            } else {
-                replyToUser("Ici c'est moi qui pose des questions");
-            }
-            return;
-        }
-
-
-        // Nothing clever to say, answer randomly
-        if (random.nextBoolean()) {
-            replyToUser("Il faut beau aujourd'hui, vous ne trouvez pas ?");
-            return;
-        }
-        if (random.nextBoolean()) {
-            replyToUser("Je ne comprends pas.");
-            return;
-        }
-        if (random.nextBoolean()) {
-            replyToUser("Hmmm, hmm ...");
-            return;
-        }
-        // Default answer
-        if (getName() != null) {
-            replyToUser("Qu'est-ce qui vous fait dire cela, " + getName() + " ?");
-        } else {
-            replyToUser("Qu'est-ce qui vous fait dire cela ?");
-        }
-    }
-
-=======
->>>>>>> 0bf42804e99869aca1a58b7dcfff8ae90baebe48
     /**
      * Cette fonction permet de reconstruire notre vue
      * lorsqu'un nouveau message a été envoyer ou plus
