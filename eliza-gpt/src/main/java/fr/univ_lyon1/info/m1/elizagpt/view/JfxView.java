@@ -28,6 +28,7 @@ import java.util.Random;
 public class JfxView {
     private final VBox dialog;
     private TextField text = null;
+
     private TextField searchText = null;
     private Label searchTextLabel = null;
     private MessageProcessor processor = new MessageProcessor();
@@ -79,12 +80,7 @@ public class JfxView {
 
     //same code that the sendMessage function. We have to simplify both functions.
     private void replyToUser(final String text) {
-        if (text != null && !text.trim().isEmpty()) {
-            controleur.setMessage(text);
-            controleur.stockMessage(text);
-            controleur.handleUserReply(text);
-        }
-
+        controleur.handleUserReply(text);
         HBox hBox = new HBox();
         final Label label = new Label(text);
         hBox.getChildren().add(label);
@@ -98,7 +94,7 @@ public class JfxView {
     }
 
     private void sendMessage(final String text) {
-        controleur.updateView();
+
         HBox hBox = new HBox();
         final Label label = new Label(text);
         hBox.getChildren().add(label);
