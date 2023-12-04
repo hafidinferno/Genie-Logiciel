@@ -2,23 +2,23 @@ package fr.univ_lyon1.info.m1.elizagpt.controleur;
 
 
 import java.util.ArrayList;
-
 import fr.univ_lyon1.info.m1.elizagpt.model.DataMessage;
 import fr.univ_lyon1.info.m1.elizagpt.view.JfxView;
 import fr.univ_lyon1.info.m1.elizagpt.model.Dao;
 
 
+
 /** La classe controleur qui s'occupe de gérer les interactions entre la vue et le model. */
 public final class Controleur  {
-
     private final HandleMessage handleMessage;
     private final JfxView view;
     private final Dao dao;
 
 
-
-
-    /**constructeur de la classe Controleur. */
+    /**
+     * Constructeur de la classe Controleur.
+     * @param view Vue associée à ce controleur.
+     */
     public Controleur(final JfxView view) {
         this.handleMessage = new HandleMessage();
         this.view = view;
