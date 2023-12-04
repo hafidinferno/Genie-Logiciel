@@ -11,11 +11,10 @@ import java.util.regex.Matcher;
  */
 public final class Ia {
 	private static Ia instance;
-	private MessageProcessor processor;
+	private final MessageProcessor processor;
 	private final Pattern[] patterns;
 	private Matcher matcher;
-	private Random random;
-	private final int id;
+	private final Random random;
 
 	// Idée à discuter: cette enum devait permettre d'identifier les
 	// réponses possibles de notre IA.
@@ -39,12 +38,12 @@ public final class Ia {
 		random = new Random();
 		processor = new MessageProcessor();
 
-		id = 2;
 	}
 
 	/**
 	 * Fonction permettant de récupérer l'instance d'IA s'il en existe une
 	 * ou d'en créer une puis la récupérer.
+	 *
 	 * @return Ia instance
 	 */
 	public static Ia getInstance() {
@@ -55,12 +54,13 @@ public final class Ia {
 			return instance;
 		}
 	}
-	
+
 	/**
 	 * Fonction permettant de connaitre quel pattern est présent
 	 * dans le message de l'utilisateur afin de lui répondre.
+	 *
 	 * @param normalizedText message de l'utilisateur.
-	 * @param userName Nom de l'utilisateur si le programme le connait
+	 * @param userName       Nom de l'utilisateur si le programme le connait
 	 * @return une réponse de type String.
 	 */
 	public String process(final String normalizedText, final String userName) {
@@ -71,41 +71,42 @@ public final class Ia {
 			if (matcher.matches()) {
 				break;
 			}
+			i++;
 		}
-		
+
 		return responseChoice(i, userName);
 	}
 
 	private String responseChoice(final int indice, final String userName) {
 		switch (indice) {
-			case 0 :
+			case 0:
 				return "Bonjour " + matcher.group(1) + ".";
-			case 1 :
+			case 1:
 				if (userName != null) {
 					return "Votre nom est " + userName + ".";
 				} else {
 					return "Je ne connais pas votre nom.";
 				}
-			case 2 :
+			case 2:
 				return "Le plus " + matcher.group(1)
-                        + " est bien sûr votre enseignant de MIF01 !";
-			case 3 :
-				final String startQuestion = processor.pickRandom(new String[] {
-                "Pourquoi dites-vous que ",
-                "Pourquoi pensez-vous que ",
-                "Êtes-vous sûr que ",
-            	});
+						+ " est bien sûr votre enseignant de MIF01 !";
+			case 3:
+				final String startQuestion = processor.pickRandom(new String[]{
+						"Pourquoi dites-vous que ",
+						"Pourquoi pensez-vous que ",
+						"Êtes-vous sûr que ",
+				});
 
-				return startQuestion 
-					+ processor.firstToSecondPerson(matcher.group(1))
-					+ " ?";
-			case 4 :
+				return startQuestion
+						+ processor.firstToSecondPerson(matcher.group(1))
+						+ " ?";
+			case 4:
 				if (random.nextBoolean()) {
 					return "Je vous renvoie la question";
 				} else {
 					return "Ici c'est moi qui pose des questions";
 				}
-			default :
+			default:
 				if (random.nextBoolean()) {
 					return "Il faut beau aujourd'hui, vous ne trouvez pas ?";
 				} else if (random.nextBoolean()) {
@@ -114,19 +115,11 @@ public final class Ia {
 					return "Hmmm, hmm ...";
 				} else if (userName != null) {
 					return "Qu'est-ce qui vous fait dire cela, "
-					+ userName
-					+ " ?";
+							+ userName
+							+ " ?";
 				} else {
 					return "Qu'est ce qui vous fait dire cela ?";
 				}
 		}
-	}
-
-	/**
-	 * Fonction permettant de récupérer l'id de l'IA.
-	 * @return
-	 */
-	public int getId() {
-		return id;
 	}
 }

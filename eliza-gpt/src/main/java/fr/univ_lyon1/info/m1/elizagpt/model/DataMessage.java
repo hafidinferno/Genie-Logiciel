@@ -8,36 +8,39 @@ import java.util.Date;
  */
 public class DataMessage {
 
-	private final int id;
-	private final Date date;
+	private final boolean ia;
+	private final String texte;
+	private final Integer hash;
 
-	private final HashAndMessage message;
 
 
 	/**
 	 * Constructeur de la classe.
 	 * @param text message écrit par l'expéditeur
-	 * @param i Id de l'expéditeur
+	 * @param isIa permet de savoir si le message est écrit par l'utilisateur ou l'IA.
 	 */
-	public DataMessage(final String text, final int i) {
-		id = i;
-		date = new Date();
-		message = new HashAndMessage(text, date);
+	public DataMessage(final String text, final boolean isIa) {
+		ia = isIa;
+		Date date = new Date();
+		hash = date.hashCode();
+		texte = text;
+
 	} 
 
-	/**
-	 * 
-	 * @return Le message
-	 */
-	public final HashAndMessage getMessage() {
-		return message;
-	}
 
 	/**
 	 * @return Id de notre message
 	 */
-	public final int getId() {
-		return id;
+	public final boolean isIa() {
+		return ia;
+	}
+
+	public final String getText() {
+		return texte;
+	}
+
+	public final Integer getHash() {
+		return hash;
 	}
 
 }

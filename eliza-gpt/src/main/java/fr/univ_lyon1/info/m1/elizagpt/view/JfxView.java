@@ -2,8 +2,7 @@ package fr.univ_lyon1.info.m1.elizagpt.view;
 
 import java.util.ArrayList;
 import fr.univ_lyon1.info.m1.elizagpt.controleur.Controleur;
-import fr.univ_lyon1.info.m1.elizagpt.model.HashAndMessage;
-import fr.univ_lyon1.info.m1.elizagpt.model.MessageProcessor;
+import fr.univ_lyon1.info.m1.elizagpt.model.DataMessage;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -14,7 +13,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import java.util.Random;
 
 
 /**
@@ -25,8 +23,6 @@ public class JfxView {
     private TextField text = null;
     private TextField searchText = null;
     private Label searchTextLabel = null;
-    private MessageProcessor processor = new MessageProcessor();
-    private final Random random = new Random();
     private final Controleur controleur;
     /**
      * Create the main view of the application.
@@ -36,7 +32,6 @@ public class JfxView {
         stage.setTitle("Eliza GPT");
 
         final VBox root = new VBox(10);
-        controleur = new Controleur(this);
 
         final Pane search = createSearchWidget();
         root.getChildren().add(search);
@@ -48,10 +43,10 @@ public class JfxView {
         dialogScroll.vvalueProperty().bind(dialog.heightProperty());
         root.getChildren().add(dialogScroll);
         dialogScroll.setFitToWidth(true);
+        controleur = new Controleur(this);
 
         final Pane input = createInputWidget();
         root.getChildren().add(input);
-        replyToUser("Bonjour");
 
         // Everything's ready: add it to the scene and display it
         final Scene scene = new Scene(root, width, height);
@@ -66,52 +61,29 @@ public class JfxView {
     static final String USER_STYLE = "-fx-background-color: #A0E0A0; " + BASE_STYLE;
     static final String ELIZA_STYLE = "-fx-background-color: #A0A0E0; " + BASE_STYLE;
 
-    //replyToUser doit se transformer en ``createDialogBox(final String text)``
-    // et appeler le controlleur pour ajouter le message à la dao
-    //same code that the sendMessage function. We have to simplify both functions.
-    private void replyToUser(final String text) {
-        controleur.handleUserReply(text);
-
-        /*HBox hBox = new HBox();
-        final Label label = new Label(text);
-        hBox.getChildren().add(label);
-        label.setStyle(USER_STYLE);
-        hBox.setAlignment(Pos.BASELINE_LEFT);
-        dialog.getChildren().add(hBox);
-        hBox.setOnMouseClicked(e -> {
-            dialog.getChildren().remove(hBox);
-        });*/
-        // TODO: a click on this hbox should delete the message.
-    }
 
     /**
      * Cette fonction permet de reconstruire notre vue
      * lorsqu'un nouveau message a été envoyer ou plus
      * généralement quand il y un changement lié à notre base
      * de données.
-     * @param messageArray
+     * @param messageArray Liste des message à afficher
      */
-    public void refreshView(final ArrayList<HashAndMessage> messageArray) {
+    public void refreshView(final ArrayList<DataMessage> messageArray) {
         dialog.getChildren().clear();
-        boolean isIa = true; //à modifier
-        for (HashAndMessage message : messageArray) {
+        for (DataMessage message : messageArray) {
             HBox hBox = new HBox();
             final Label label = new Label(message.getText());
             hBox.getChildren().add(label);
-            if (isIa) {
+            if (message.isIa()) {
                 label.setStyle(ELIZA_STYLE);
+                hBox.setAlignment(Pos.BASELINE_LEFT);
             } else {
                 label.setStyle(USER_STYLE);
+                hBox.setAlignment(Pos.BASELINE_RIGHT);
             }
-            isIa = !isIa;
-            hBox.setAlignment(Pos.BASELINE_RIGHT);
             dialog.getChildren().add(hBox);
-            hBox.setOnMouseClicked(e -> {
-                //Controleur.deleteMessage(message.getHash());
-                //À rremplacer par un callback qui appel le controlleur
-                // et qui effectue bien l'action souhaitée
-                //ici : supprimer un message de notre appli et de la vue.
-            });
+            hBox.setOnMouseClicked(e -> controleur.deleteMessage(message.getHash()));
         }
     }
 
@@ -122,22 +94,31 @@ public class JfxView {
         secondLine.setAlignment(Pos.BASELINE_LEFT);
         searchText = new TextField();
         searchText.setOnAction(e -> {
-            //controleur.searchText(searchText);
+            controleur.searchText(searchText.getText());
+            searchText.setText("");
         });
         firstLine.getChildren().add(searchText);
         final Button send = new Button("Search");
         send.setOnAction(e -> {
-            //controleur.searchText(searchText);
+            controleur.searchText(searchText.getText());
+            searchText.setText("");
         });
         searchTextLabel = new Label();
         final Button undo = new Button("Undo search");
-        undo.setOnAction(e -> {
-            throw new UnsupportedOperationException("TODO: implement undo for search");
-        });
+        undo.setOnAction(e -> controleur.undoSearch());
         secondLine.getChildren().addAll(send, searchTextLabel, undo);
         final VBox input = new VBox();
         input.getChildren().addAll(firstLine, secondLine);
         return input;
+    }
+
+    /**
+     * Fonction permettant de connaître la chaine de charactères
+     * recherchée mais aussi l'état de la recherche.
+     * @param searchingText état de la recherche.
+     */
+    public void changeSearchLabel(final String searchingText) {
+        searchTextLabel.setText(searchingText);
     }
 
 

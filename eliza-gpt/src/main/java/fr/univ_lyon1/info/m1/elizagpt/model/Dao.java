@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javafx.scene.control.Label;
-
 /**
  * Database de notre programme. Elle regroupe toutes les
  * informations relatives à nos message.
@@ -39,10 +37,10 @@ public final class Dao {
 	 * Ajoute à notre database un message ainsi que l'ID de
 	 * l'expéditeur.
 	 * @param message texte de notre message
-	 * @param id Id de l'entité ayant écrit le message
+	 * @param isIa permet de savoir si le message est envoyé par l'IA ou l'utilisateur
 	 */
-	public void addMessage(final String message, final int id) {
-		messages.add(new DataMessage(message, id));
+	public void addMessage(final String message, final boolean isIa) {
+		messages.add(new DataMessage(message, isIa));
 	}
 
 	/**
@@ -52,8 +50,8 @@ public final class Dao {
 	 */
 	public String getName() {
         for (DataMessage message : messages) {
-			if (message.getId() == 1) {
-				String text = message.getMessage().getText();
+			if (!message.isIa()) {
+				String text = message.getText();
 				Pattern pattern = Pattern.compile("Je m'appelle (.*)\\.",
 									Pattern.CASE_INSENSITIVE);
 				Matcher matcher = pattern.matcher(text);
@@ -69,27 +67,19 @@ public final class Dao {
 	 * Recherche dans la database les messages correspondant au text qui lui
 	 * a été donné. cette recherche fonctionne à l'aide de regex.
 	 * @param text chaine de caractère que l'on cherche
-	 * @param searchTextLabel label de notre barre de recherche.
-	 * il nous permet de notifier l'utilisateur si la recherche est en
-	 * cours ou non.
 	 * @return Une liste de messages qui match avec notre recherche.
 	 */
-	public ArrayList<HashAndMessage> search(final String text, final Label searchTextLabel) {
+	public ArrayList<DataMessage> search(final String text) {
         Pattern pattern;
         Matcher matcher;
-        if (text == null || text.isEmpty()) {
-            searchTextLabel.setText("No active search");
-        } else {
-            searchTextLabel.setText("Searching for: " + text);
-        }
-        pattern = Pattern.compile(text, Pattern.CASE_INSENSITIVE);
-        ArrayList<HashAndMessage> found = new ArrayList<>();
+        pattern = Pattern.compile(".*" + text + ".*", Pattern.CASE_INSENSITIVE);
+        ArrayList<DataMessage> found = new ArrayList<>();
         for (DataMessage tuple : messages) {
-			HashAndMessage message = tuple.getMessage();
-			matcher = pattern.matcher(message.getText());
-			if (!matcher.find()) {
+			String message = tuple.getText();
+			matcher = pattern.matcher(message);
+			if (matcher.find()) {
 				// Can delete it right now, we're iterating over the list.
-				found.add(tuple.getMessage());
+				found.add(tuple);
 			}
         }
         return found;
@@ -101,12 +91,8 @@ public final class Dao {
 	 * [message, hash].
 	 * @return une Arrayliste de couple [message,hash]
 	 */
-	public ArrayList<HashAndMessage> getAllMessage() {
-	ArrayList<HashAndMessage> res = new ArrayList<>();
-	for (DataMessage message : messages) {
-		res.add(message.getMessage());
-	}
-	return res;
+	public ArrayList<DataMessage> getAllMessage() {
+	return messages;
 }
 
 	/**
@@ -117,9 +103,8 @@ public final class Dao {
 	 *             supprimer.
 	 */
 	public void deleteMessage(final Integer hash) {
-		DataMessage deletedMessage = null;
 		for (DataMessage message : messages) {
-			if (message.getMessage().getHash().equals(hash)) {
+			if (message.getHash().equals(hash)) {
 				messages.remove(message);
 				return;
 			}
