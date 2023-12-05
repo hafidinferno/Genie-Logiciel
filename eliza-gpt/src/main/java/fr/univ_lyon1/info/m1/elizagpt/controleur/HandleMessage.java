@@ -29,14 +29,13 @@ public class HandleMessage {
      */
 	public void reply(final String text, final boolean isIa) {
         dao.addMessage(text, isIa);
-	// TODO: a click on this hbox should delete the message.
 	}
 
     /**
      * Fonction de réponse de l'IA.
      * @param text message envoyé par l'utilisateur.
      */
-    public void iaRespond(final String text) {
+    public void iaResponse(final String text) {
         String iaResponse = ia.process(text, dao.getName());
         reply(iaResponse, true);
     }

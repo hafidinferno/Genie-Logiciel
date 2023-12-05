@@ -1,6 +1,5 @@
 package fr.univ_lyon1.info.m1.elizagpt.model;
 
-import java.util.Random;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -14,8 +13,9 @@ public final class Ia {
 	private final MessageProcessor processor;
 	private final Pattern[] patterns;
 	private Matcher matcher;
-	private final Random random;
+	private final CreateResponse responseList;
 
+	private final int nbPatterns;
 	// Idée à discuter: cette enum devait permettre d'identifier les
 	// réponses possibles de notre IA.
 	// public enum RespondType {
@@ -27,15 +27,18 @@ public final class Ia {
 	// }
 
 	private Ia() {
-		patterns = new Pattern[5];
+
+		nbPatterns = 6;
+		patterns = new Pattern[nbPatterns];
 		matcher = null;
 		patterns[0] = Pattern.compile(".*Je m'appelle (.*)\\.", Pattern.CASE_INSENSITIVE);
 		patterns[1] = Pattern.compile("Quel est mon nom \\?", Pattern.CASE_INSENSITIVE);
 		patterns[2] = Pattern.compile("Qui est le plus (.*) \\?", Pattern.CASE_INSENSITIVE);
 		patterns[3] = Pattern.compile("(Je .*)\\.", Pattern.CASE_INSENSITIVE);
 		patterns[4] = Pattern.compile(".*\\?$", Pattern.CASE_INSENSITIVE);
+		patterns[5] = Pattern.compile("Au revoir (.*)\\.", Pattern.CASE_INSENSITIVE);
 
-		random = new Random();
+		responseList = new CreateResponse();
 		processor = new MessageProcessor();
 
 	}
@@ -65,7 +68,7 @@ public final class Ia {
 	 */
 	public String process(final String normalizedText, final String userName) {
 		int i = 0;
-		while (i < 5) {
+		while (i < nbPatterns) {
 
 			matcher = patterns[i].matcher(normalizedText);
 			if (matcher.matches()) {
@@ -74,52 +77,14 @@ public final class Ia {
 			i++;
 		}
 
-		return responseChoice(i, userName);
+		return response(i, userName);
 	}
 
-	private String responseChoice(final int indice, final String userName) {
-		switch (indice) {
-			case 0:
-				return "Bonjour " + matcher.group(1) + ".";
-			case 1:
-				if (userName != null) {
-					return "Votre nom est " + userName + ".";
-				} else {
-					return "Je ne connais pas votre nom.";
-				}
-			case 2:
-				return "Le plus " + matcher.group(1)
-						+ " est bien sûr votre enseignant de MIF01 !";
-			case 3:
-				final String startQuestion = processor.pickRandom(new String[]{
-						"Pourquoi dites-vous que ",
-						"Pourquoi pensez-vous que ",
-						"Êtes-vous sûr que ",
-				});
-
-				return startQuestion
-						+ processor.firstToSecondPerson(matcher.group(1))
-						+ " ?";
-			case 4:
-				if (random.nextBoolean()) {
-					return "Je vous renvoie la question";
-				} else {
-					return "Ici c'est moi qui pose des questions";
-				}
-			default:
-				if (random.nextBoolean()) {
-					return "Il faut beau aujourd'hui, vous ne trouvez pas ?";
-				} else if (random.nextBoolean()) {
-					return "Je ne comprends pas.";
-				} else if (random.nextBoolean()) {
-					return "Hmmm, hmm ...";
-				} else if (userName != null) {
-					return "Qu'est-ce qui vous fait dire cela, "
-							+ userName
-							+ " ?";
-				} else {
-					return "Qu'est ce qui vous fait dire cela ?";
-				}
+	private String response(final int indice, final String userName) {
+		responseList.setName(userName);
+		if (indice < nbPatterns) {
+			responseList.setGroupeNominal(indice, matcher.group(1));
 		}
+		return responseList.response(indice);
 	}
 }
