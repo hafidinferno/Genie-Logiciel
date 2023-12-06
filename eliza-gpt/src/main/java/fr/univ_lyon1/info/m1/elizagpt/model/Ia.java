@@ -10,21 +10,11 @@ import java.util.regex.Matcher;
  */
 public final class Ia {
 	private static Ia instance;
-	private final MessageProcessor processor;
 	private final Pattern[] patterns;
 	private Matcher matcher;
 	private final CreateResponse responseList;
 
 	private final int nbPatterns;
-	// Idée à discuter: cette enum devait permettre d'identifier les
-	// réponses possibles de notre IA.
-	// public enum RespondType {
-	// 	PRESENTATION,
-	// 	DEMANDE_DE_NOM,
-	// 	LE_PLUS_,
-	// 	COMMENCE_PAR_JE,
-	// 	POSE_QUESTION
-	// }
 
 	private Ia() {
 
@@ -32,14 +22,13 @@ public final class Ia {
 		patterns = new Pattern[nbPatterns];
 		matcher = null;
 		patterns[0] = Pattern.compile(".*Je m'appelle (.*)\\.", Pattern.CASE_INSENSITIVE);
-		patterns[1] = Pattern.compile("Quel est mon nom \\?", Pattern.CASE_INSENSITIVE);
-		patterns[2] = Pattern.compile("Qui est le plus (.*) \\?", Pattern.CASE_INSENSITIVE);
+		patterns[1] = Pattern.compile("Quel est mon nom\\?", Pattern.CASE_INSENSITIVE);
+		patterns[2] = Pattern.compile("Qui est le plus (.*)\\?", Pattern.CASE_INSENSITIVE);
 		patterns[3] = Pattern.compile("(Je .*)\\.", Pattern.CASE_INSENSITIVE);
 		patterns[4] = Pattern.compile(".*\\?$", Pattern.CASE_INSENSITIVE);
-		patterns[5] = Pattern.compile("Au revoir (.*)\\.", Pattern.CASE_INSENSITIVE);
+		patterns[5] = Pattern.compile("Au revoir(.*)\\.", Pattern.CASE_INSENSITIVE);
 
 		responseList = new CreateResponse();
-		processor = new MessageProcessor();
 
 	}
 
@@ -52,10 +41,8 @@ public final class Ia {
 	public static Ia getInstance() {
 		if (instance == null) {
 			instance = new Ia();
-			return instance;
-		} else {
-			return instance;
 		}
+		return instance;
 	}
 
 	/**
@@ -82,9 +69,6 @@ public final class Ia {
 
 	private String response(final int indice, final String userName) {
 		responseList.setName(userName);
-		if (indice < nbPatterns) {
-			responseList.setGroupeNominal(indice, matcher.group(1));
-		}
-		return responseList.response(indice);
+		return responseList.response(indice, matcher);
 	}
 }

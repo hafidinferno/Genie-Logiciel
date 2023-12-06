@@ -2,24 +2,23 @@ package fr.univ_lyon1.info.m1.elizagpt.model;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.regex.Matcher;
 
 /**
  * La fonction permet fabriquer et récuperer la réponse
  * de l'IA qu'obtiendra l'utilisateur.
  */
 public class CreateResponse {
-    private String groupeNominal;
     private String username;
-    private ArrayList<String> responseList;
-    private MessageProcessor processor;
-    private Random random;
+    private final ArrayList<String> responseList;
+    private final MessageProcessor processor;
+    private final Random random;
 
     /**
      * Constructeur de la classe.
      */
     public CreateResponse() {
         username = null;
-        groupeNominal = null;
         processor = new MessageProcessor();
         random = new Random();
 
@@ -27,8 +26,7 @@ public class CreateResponse {
 
         responseList.add("Bonjour .");
         responseList.add("Je ne connais pas votre nom.");
-        responseList.add("Le plus " + groupeNominal
-                + " est bien sûr votre enseignant de MIF01 !");
+        responseList.add(" ");
         responseList.add("verbe question");
         responseList.add("rétorque");
         responseList.add("au revoir");
@@ -49,27 +47,29 @@ public class CreateResponse {
     }
 
     /**
-     * La fonction permet de changer le groupe nominal
-     * actuel. Cependant, si l'indice entré en paramètre est supérieur
-     * ou égal au nombre de choix de réponses possible alors
-     * une chaine de charactères vide est affectée au groupe nominal.
-     * @param indice indice de la réponse choisie dans le tableau
-     *               de réponses posssibles.
-     * @param groupNom groupe nominal.
+     * Fonction permettant de créer la réponse de salutation.
+     * si l'indice ne corresspond pas à l'élément du tableau
+     * correspondant à cette réponse alors rien est fait.
+     * @param indice indice correspondant à la réponse choisie.
+     * @param matcher matcher contenant la phrase de l'utilisateur.
      */
-    public void setGroupeNominal(final int indice, final String groupNom) {
-        if (indice + 1 < responseList.size()) {
-            groupeNominal = groupNom;
-        } else {
-            groupeNominal = " ";
+    private void createHelloResponse(final int indice, final Matcher matcher) {
+        if (indice == 0) {
+            responseList.set(0, "Bonjour " + matcher.group(1) + ".");
         }
     }
 
     /**
-     * Fonction permettant de créer la réponse de salutation.
+     * Fonction permettant de créer la réponse indiquant
+     * qui est "le plus..." en fonction du groupe nominal.
+     * @param indice indice de la réponse choisie.
+     * @param matcher matcher contenant la phrase de l'utilisateur.
      */
-    private void createHelloResponse() {
-        responseList.set(0, "Bonjour " + groupeNominal + ".");
+    private void createWhoIsResponse(final int indice, final Matcher matcher) {
+        if (indice == 2) {
+            responseList.set(2, "Le plus " + matcher.group(1)
+                    + " est bien sûr votre enseignant de MIF01 !");
+        }
     }
 
     /**
@@ -78,16 +78,16 @@ public class CreateResponse {
      * Cette fontion ne modifie pas notre liste de réponses
      * si le groupe nominal actuel est n'est pas différent de "null".
      */
-    private void createQuestion() {
+    private void createQuestion(final int indice, final Matcher matcher) {
         String startQuestion = processor.pickRandom(new String[]{
                 "Pourquoi dites-vous que ",
                 "Pourquoi pensez-vous que ",
                 "Êtes-vous sûr que ",
         });
 
-        if (groupeNominal != null) {
+        if (indice == 3) {
             responseList.set(3, startQuestion
-                    + processor.firstToSecondPerson(groupeNominal)
+                    + processor.firstToSecondPerson(matcher.group(1))
                     + "?");
         }
     }
@@ -141,11 +141,13 @@ public class CreateResponse {
      * réponse sera séléctionnée.
      * @param indice indice de la réponse correspondant
      *               au message envoyé par l'utilisateur.
+     * @param matcher matcher contenant la phrase de l'utilisateur.
      * @return une réponse de l'IA parmis sa liste
      */
-    public String response(final int indice) {
-        createHelloResponse();
-        createQuestion();
+    public String response(final int indice, final Matcher matcher) {
+        createHelloResponse(indice, matcher);
+        createWhoIsResponse(indice, matcher);
+        createQuestion(indice, matcher);
         createRetorqueResponse();
         createGoodBye();
         chooseDefaultResponse();
