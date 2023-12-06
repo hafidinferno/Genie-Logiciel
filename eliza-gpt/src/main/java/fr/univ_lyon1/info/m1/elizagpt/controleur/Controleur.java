@@ -2,31 +2,52 @@ package fr.univ_lyon1.info.m1.elizagpt.controleur;
 
 
 import java.util.ArrayList;
+
+import fr.univ_lyon1.info.m1.elizagpt.model.Dao;
 import fr.univ_lyon1.info.m1.elizagpt.model.DataMessage;
 import fr.univ_lyon1.info.m1.elizagpt.view.JfxView;
-import fr.univ_lyon1.info.m1.elizagpt.model.Dao;
-
 
 
 /** La classe controleur qui s'occupe de gérer les interactions entre la vue et le model. */
 public final class Controleur  {
     private final HandleMessage handleMessage;
-    private final JfxView view;
-    private final Dao dao;
+    private final ArrayList<JfxView> views;
+    private static Dao dao;
+
+    private static Controleur instance;
 
 
     /**
      * Constructeur de la classe Controleur.
      * @param view Vue associée à ce controleur.
      */
-    public Controleur(final JfxView view) {
+    private Controleur(final JfxView view) {
         this.handleMessage = new HandleMessage();
-        this.view = view;
+        this.views = new ArrayList<>();
+        this.views.add(view);
         dao = Dao.getInstance();
-        ArrayList<DataMessage> res = dao.getAllMessage();
-        this.view.refreshView(res);
+
     }
 
+    /**
+     * La fonciton permet d'obtenir une instance du controleur.
+     * Si aucun controleur n'était instancié, alors il est créé.
+     * Sinon, la vu passé en paramètre est simplement ajoutée à une liste de vue.
+     * @param view nouvelle vue ajoutée à la liste des vues du controleur.
+     * @return une instance de controleur
+     */
+    public static Controleur getInstance(final JfxView view) {
+        if (instance != null) {
+            instance.views.add(view);
+        } else {
+            instance = new Controleur(view);
+        }
+        ArrayList<DataMessage> res = dao.getAllMessage();
+        for (JfxView viewIterate : instance.views) {
+            viewIterate.refreshView(res);
+        }
+        return instance;
+    }
 
 
     /** la methode handleUserReply s'occupe de stocker le message dans la Dao.
@@ -38,9 +59,11 @@ public final class Controleur  {
     public void handleUserReply(final String text) {
         if (!(text == null) && !text.isEmpty()) {
             handleMessage.reply(text, false);
-            handleMessage.iaRespond(text);
+            handleMessage.iaResponse(text);
             ArrayList<DataMessage> res = dao.getAllMessage();
-            view.refreshView(res);
+            for (JfxView viewIterate : instance.views) {
+                viewIterate.refreshView(res);
+            }
         }
     }
 
@@ -52,7 +75,9 @@ public final class Controleur  {
     public void deleteMessage(final Integer hash) {
         dao.deleteMessage(hash);
         ArrayList<DataMessage> res = dao.getAllMessage();
-        view.refreshView(res);
+        for (JfxView viewIterate : instance.views) {
+            viewIterate.refreshView(res);
+        }
     }
 
     /**
@@ -63,19 +88,29 @@ public final class Controleur  {
      */
     public void searchText(final String text) {
         if (text == null || text.isEmpty()) {
-            view.changeSearchLabel("No active search");
+            for (JfxView viewIterate : instance.views) {
+                viewIterate.changeSearchLabel("No active search.");
+            }
         } else {
-            view.changeSearchLabel("Searching for: " + text);
+            for (JfxView viewIterate : instance.views) {
+                viewIterate.changeSearchLabel("Searching for: " + text);
+            }
         }
         ArrayList<DataMessage> res = handleMessage.searchText(text);
-        view.refreshView(res);
+        for (JfxView viewIterate : instance.views) {
+            viewIterate.refreshView(res);
+        }
     }
 
     /**
      * permet de rafficher tous les messages de la base de données?
      */
     public void undoSearch() {
-        view.refreshView(dao.getAllMessage());
+        for (JfxView viewIterate : instance.views) {
+            viewIterate.refreshView(dao.getAllMessage());
+        }
     }
+
+
 }
 
