@@ -33,7 +33,6 @@ public class JfxView {
     /**
      * Create the main view of the application.
      */
-        // TODO: style error in the following line. Check that checkstyle finds it, and then fix it.
     public JfxView(final Stage stage, final int width, final int height) {
         stage.setTitle("Eliza GPT");
 
@@ -78,18 +77,22 @@ public class JfxView {
     public void refreshView(final ArrayList<DataMessage> messageArray) {
         dialog.getChildren().clear();
         for (DataMessage message : messageArray) {
+            HBox motherHBox = new HBox();
             HBox hBox = new HBox();
             final Label label = new Label(message.getText());
-            hBox.getChildren().add(label);
+            Button deleteMessageButton = new Button("x");
+            deleteMessageButton.setOnMouseClicked(e -> controleur.deleteMessage(message.getHash()));
             if (message.isIa()) {
-                label.setStyle(ELIZA_STYLE);
-                hBox.setAlignment(Pos.BASELINE_LEFT);
+                hBox.setStyle(ELIZA_STYLE);
+                motherHBox.setAlignment(Pos.BASELINE_LEFT);
             } else {
-                label.setStyle(USER_STYLE);
-                hBox.setAlignment(Pos.BASELINE_RIGHT);
+                hBox.setStyle(USER_STYLE);
+                motherHBox.setAlignment(Pos.BASELINE_RIGHT);
             }
-            dialog.getChildren().add(hBox);
-            hBox.setOnMouseClicked(e -> controleur.deleteMessage(message.getHash()));
+            hBox.getChildren().add(label);
+            hBox.getChildren().add(deleteMessageButton);
+            motherHBox.getChildren().add(hBox);
+            dialog.getChildren().add(motherHBox);
         }
     }
 
