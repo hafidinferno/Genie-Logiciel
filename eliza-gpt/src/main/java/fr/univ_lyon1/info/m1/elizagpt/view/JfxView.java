@@ -2,10 +2,16 @@ package fr.univ_lyon1.info.m1.elizagpt.view;
 
 import java.util.ArrayList;
 import fr.univ_lyon1.info.m1.elizagpt.controleur.Controleur;
+import fr.univ_lyon1.info.m1.elizagpt.controleur.RegexSearch;
 import fr.univ_lyon1.info.m1.elizagpt.model.DataMessage;
+import fr.univ_lyon1.info.m1.elizagpt.model.SubString;
+import fr.univ_lyon1.info.m1.elizagpt.model.TypeRecherche;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -43,7 +49,7 @@ public class JfxView {
         dialogScroll.vvalueProperty().bind(dialog.heightProperty());
         root.getChildren().add(dialogScroll);
         dialogScroll.setFitToWidth(true);
-        controleur = new Controleur(this);
+        controleur = Controleur.getInstance(this);
 
         final Pane input = createInputWidget();
         root.getChildren().add(input);
@@ -93,11 +99,15 @@ public class JfxView {
         firstLine.setAlignment(Pos.BASELINE_LEFT);
         secondLine.setAlignment(Pos.BASELINE_LEFT);
         searchText = new TextField();
+        final ObservableList<TypeRecherche> list = createListDeroulante();
+        ComboBox<TypeRecherche> listeDeroulante = new ComboBox<>();
+        listeDeroulante.setItems(list);
+        listeDeroulante.getSelectionModel().select(1);
         searchText.setOnAction(e -> {
             controleur.searchText(searchText.getText());
             searchText.setText("");
         });
-        firstLine.getChildren().add(searchText);
+        firstLine.getChildren().addAll(searchText, listeDeroulante);
         final Button send = new Button("Search");
         send.setOnAction(e -> {
             controleur.searchText(searchText.getText());
@@ -119,6 +129,19 @@ public class JfxView {
      */
     public void changeSearchLabel(final String searchingText) {
         searchTextLabel.setText(searchingText);
+    }
+
+    private ObservableList<TypeRecherche> createListDeroulante() {
+
+        ObservableList<TypeRecherche> list = FXCollections.observableArrayList(
+                new RegexSearch(),
+                new SubString()
+        );
+        ComboBox<TypeRecherche> listeDeroulante = new ComboBox<>();
+
+        listeDeroulante.setItems(list);
+
+        return list;
     }
 
 
