@@ -11,7 +11,7 @@
 * Rendu du TP noté : vous devez avoir rempli le champ URL de TOMUSS avant le 20 septembre 2023 (malus sur la note si ce n'est pas fait sans une raison valable). Le rendu final est le 17/12/2023 à 23h59. Voir
   [projet-note.md](projet-note.md) pour un récapitulatif des consignes.
 
-* Examen : TODO: date à définir. 1h30 (sauf tiers-temps) Consignes : Seules 5
+* Examen : 10 janvier 2024, 8h30, voir amphi sur TOMUSS. 1h30 (sauf tiers-temps) Consignes : Seules 5
   feuilles A4 recto verso (donc 10 pages au total) sont autorisées à
   l’examen. Leur contenu est libre. Elles peuvent être une sélection de
   transparents ou manuscrites, avec une taille de caractère de votre
@@ -129,8 +129,8 @@ email, ce fichier en contient une copie.
 
 * Vidéo : <a target="_blank" title="Métaprogrammation" href="https://myvideo.univ-lyon1.fr/permalink/v126648320fc5hrmy3g1/iframe/"><img src="https://myvideo.univ-lyon1.fr/public/videos/v125f5e59e89b1kkvlmtrymwi6ngkv/thumb_link.png" alt="Métaprogrammation"/></a>
 
-* Transparents [07-metaprogramming-slides.pdf](http://matthieu-moy.fr/cours/mif01/07-metaprogramming-slides.pdf)
-  (version imprimable : [07-metaprogramming-handout.pdf](http://matthieu-moy.fr/cours/mif01/07-metaprogramming-handout.pdf))
+* Transparents [04-metaprogramming-slides.pdf](http://matthieu-moy.fr/cours/mif01/04-metaprogramming-slides.pdf)
+  (version imprimable : [04-metaprogramming-handout.pdf](http://matthieu-moy.fr/cours/mif01/04-metaprogramming-handout.pdf))
 
 ### Spécifications
 
@@ -150,7 +150,7 @@ email, ce fichier en contient une copie.
 
 ## CM 6 (18/10/2023, 8h) : Test
 
-* [Transparents de Sandrine Gouraud](http://matthieu-moy.fr/cours/mif01/gouraud_20221005.pdf)
+* Transparents de Sandrine Gouraud, lien disponible sur TOMUSS.
 
 * [Software Fail Watch, 5th
   edition](https://www.tricentis.com/wp-content/uploads/2019/01/Software-Fails-Watch-5th-edition.pdf)
@@ -161,7 +161,11 @@ email, ce fichier en contient une copie.
 * [TD2-uc-style/TD-usecase-et-style.pdf](http://matthieu-moy.fr/cours/mif01/TD2-uc-style/TD-usecase-et-style.pdf)
   (corrigé : [TD2-uc-style/TD-usecase-et-style-corrige.pdf](http://matthieu-moy.fr/cours/mif01/TD2-uc-style/TD-usecase-et-style-corrige.pdf))
 
-* Salles : TODO
+* Salles :
+  - Groupe A : Nautibus TD 1, 9h45 : Matthieu Moy
+  - Groupe B : Nautibus TD 2, 9h45 : Mathieu Hilaire
+  - Groupe C : Nautibus TD 3, 9h45 : Lionel Medini
+  - Groupe D : Nautibus TD 1, 11h30 : Matthieu Moy
 
 ## CM 7 (8/11/2023, 8h) : introduction à l'agilité
 
