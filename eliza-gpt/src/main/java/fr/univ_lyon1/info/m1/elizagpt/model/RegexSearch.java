@@ -1,4 +1,4 @@
-package fr.univ_lyon1.info.m1.elizagpt.controleur;
+package fr.univ_lyon1.info.m1.elizagpt.model;
 
 import fr.univ_lyon1.info.m1.elizagpt.model.TypeRecherche;
 
