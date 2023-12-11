@@ -43,4 +43,5 @@ public class MessageProcessorTest {
                         hasProperty("firstSingular", is("suis")),
                         hasProperty("secondPlural", is("êtes")))));
     }
+
 }
