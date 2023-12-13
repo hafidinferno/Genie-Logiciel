@@ -21,6 +21,8 @@ public class HandleMessage {
         dao.addMessage("Bonjour.", true);
 	}
 
+
+
 	/**
      * Fonction de réponse qui sera utilisée par l'utilissateur
      * et l'IA.
