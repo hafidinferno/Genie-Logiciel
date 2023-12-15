@@ -1,6 +1,6 @@
 package fr.univ_lyon1.info.m1.elizagpt.model;
 
-import fr.univ_lyon1.info.m1.elizagpt.model.TypeRecherche;
+import java.util.ArrayList;
 
 /**
  * Classe utilitaire dérivée de la classe TypeRecherche qui permet
@@ -9,9 +9,20 @@ import fr.univ_lyon1.info.m1.elizagpt.model.TypeRecherche;
 public class RegexSearch extends TypeRecherche {
 
     /**
-     * constructeur de la classe.
+     * Constructeur de la classe.
      */
     public RegexSearch() {
         super();
+    }
+
+    @Override
+    public String getTextForStrategy(final String text) {
+        return ".*" + text + ".*";
+    }
+
+    @Override
+    public ArrayList<DataMessage> search(final String text) {
+        String newText = getTextForStrategy(text);
+        return super.search(newText);
     }
 }
