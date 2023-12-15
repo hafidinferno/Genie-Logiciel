@@ -10,7 +10,7 @@ import fr.univ_lyon1.info.m1.elizagpt.view.JfxView;
 
 /** La classe controleur qui s'occupe de gérer les interactions entre la vue et le model. */
 public final class Controleur  {
-    private static HandleMessage handleMessage;
+    private final HandleMessage handleMessage;
     private final ArrayList<JfxView> views;
     private static Dao dao;
     private static Controleur instance;
@@ -32,9 +32,8 @@ public final class Controleur  {
         dao = daoMock;
     }
 
-    public static void setHandleMessage(final HandleMessage handleMessageMock) {
-        handleMessage = handleMessageMock;
-    }
+
+
 
 
     /**

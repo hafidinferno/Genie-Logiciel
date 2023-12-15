@@ -5,15 +5,17 @@ import fr.univ_lyon1.info.m1.elizagpt.model.DataMessage;
 import fr.univ_lyon1.info.m1.elizagpt.view.JfxView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+
 
 import java.util.ArrayList;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.never;
 
 
 /**
@@ -27,22 +29,81 @@ public class ControleurTest {
     private JfxView viewMock;
     @Mock
     private Dao daoMock;
-    @Mock
-    private HandleMessage handleMessageMock;
 
-    private Controleur controleur;
+
+    @InjectMocks
+    private static Controleur controleur;
+
 
     /**
-     * La fonction setUp s'occupe de initialiser les mock.
-     * qu'on va utiliser des les fonctions test.
+     * La méthode setUp s'occupe d'initialiser les mocks et l'instance du controleur.
+     * Cette configuration est utilisée dans toutes les méthodes de test.
      */
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        Controleur.setDao(daoMock);
+        daoMock = mock(Dao.class);
+        viewMock = mock(JfxView.class);
         controleur = Controleur.getInstance(viewMock);
-        controleur.setHandleMessage(handleMessageMock);
+        Controleur.setDao(daoMock);
+
+
     }
+
+    private ArrayList<DataMessage> prepareMockMessages() {
+        return new ArrayList<>();
+    }
+
+    /**
+     * Teste la méthode handleUserReply avec un texte valide.
+     * Vérifie que les méthodes getAllMessage et refreshView sont appelées correctement.
+     */
+    @Test
+    public void testHandleUserReplyWithValidText() {
+        String validText = "Some valid text";
+        ArrayList<DataMessage> mockMessages = prepareMockMessages();
+        when(daoMock.getAllMessage()).thenReturn(mockMessages);
+
+        controleur.handleUserReply(validText);
+
+        verify(daoMock, times(1)).getAllMessage();
+        verify(viewMock, times(2)).refreshView(mockMessages);
+    }
+
+
+
+    /**
+     * Teste la méthode handleUserReply avec une valeur vide.
+     * Vérifie que les méthodes getAllMessage est appelée correctement.
+     */
+
+    @Test
+    public void testHandleUserReplyWithEmptyText() {
+        controleur.handleUserReply("");
+        ArrayList<DataMessage> mockMessages = prepareMockMessages();
+        when(daoMock.getAllMessage()).thenReturn(mockMessages);
+
+
+        verify(daoMock, never()).getAllMessage();
+
+
+    }
+
+    /**
+     * Teste la méthode handleUserReply avec une valeur null.
+     * Vérifie que les méthodes getAllMessage est appelé correctement.
+     */
+    @Test
+    public void testHandleUserReplyWithNullText() {
+        controleur.handleUserReply(null);
+        ArrayList<DataMessage> mockMessages = prepareMockMessages();
+        when(daoMock.getAllMessage()).thenReturn(mockMessages);
+
+
+        verify(daoMock, never()).getAllMessage();
+
+    }
+
+
 
 
     /**
@@ -51,70 +112,72 @@ public class ControleurTest {
      * et coir si le message était supprimer(On a deja testé ca dans DaoTest).
      */
     @Test
-    void deleteMessageTest() {
-        Dao mockDao = mock(Dao.class);
-        Integer hash = 1;
-        ArrayList<DataMessage> mockMessages = new ArrayList<>();
-        controleur.deleteMessage(hash);
-
-        when(mockDao.getAllMessage()).thenReturn(mockMessages);
-
-
-        verify(daoMock).deleteMessage(hash);
-        verify(viewMock, times(2)).refreshView(mockMessages);
-
-    }
-
-    /**
-     * la fonction testHandleUserReplyWithValidText.
-     */
-    @Test
-    public void testHandleUserReplyWithValidText() {
-        String validText = "My name is hafid";
-        ArrayList<DataMessage> mockMessages = new ArrayList<>();
-
+    public void testDeleteMessage() {
+        Integer messageHash = 12345;
+        ArrayList<DataMessage> mockMessages = prepareMockMessages();
         when(daoMock.getAllMessage()).thenReturn(mockMessages);
 
-        controleur.handleUserReply(validText);
+        controleur.deleteMessage(messageHash);
 
-        verify(handleMessageMock, times(1)).reply(validText, false);
-        verify(handleMessageMock, times(1)).iaResponse(validText);
-
-
-    }
-
-
-    /**
-     * la fonction testSearchTextWithEmptyText.
-     */
-    @Test
-    public void testSearchTextWithEmptyText() {
-        String searchText = "";
-        ArrayList<DataMessage> mockMessages = new ArrayList<>();
-
-        when(handleMessageMock.searchText(searchText)).thenReturn(mockMessages);
-
-        controleur.searchText(searchText);
-
-        verify(viewMock, times(1)).changeSearchLabel("No active search.");
+        verify(daoMock, times(1)).deleteMessage(messageHash);
         verify(viewMock, times(1)).refreshView(mockMessages);
     }
 
     /**
-     * la fonction testSearchTextWithNullText.
+     * Teste la méthode searchText avec un texte de recherche spécifique.
+     * Vérifie que la vue est mise à jour avec le label de recherche et les résultats.
      */
     @Test
-    public void testSearchTextWithNullText() {
-        String searchText = null;
-        ArrayList<DataMessage> mockMessages = new ArrayList<>();
-
-        when(handleMessageMock.searchText(searchText)).thenReturn(mockMessages);
+    public void testSearchTextWithValidText() {
+        String searchText = "Hafid";
+        ArrayList<DataMessage> mockMessages = prepareMockMessages();
+        when(daoMock.getAllMessage()).thenReturn(mockMessages);
 
         controleur.searchText(searchText);
 
-        verify(viewMock, times(1)).changeSearchLabel("No active search.");
+        verify(viewMock, times(1)).changeSearchLabel("Searching for: " + searchText);
         verify(viewMock, times(2)).refreshView(mockMessages);
     }
+
+    /**
+     * Teste la méthode searchText avec un texte vide.
+     */
+    @Test
+    public void testSearchTextWithEmptyText() {
+        controleur.searchText("");
+
+        verify(viewMock, times(1)).changeSearchLabel("No active search.");
+    }
+
+    /**
+     * Teste la méthode searchText avec un texte null.
+     */
+    @Test
+    public void testSearchTextWithNullText() {
+        controleur.searchText(null);
+
+        verify(viewMock, times(1)).changeSearchLabel("No active search.");
+    }
+
+
+
+    /**
+     * Teste la méthode undoSearch pour vérifier si la vue est réinitialisée
+     * avec tous les messages après une recherche.
+     */
+    @Test
+    public void testUndoSearch() {
+        ArrayList<DataMessage> mockMessages = prepareMockMessages();
+        when(daoMock.getAllMessage()).thenReturn(mockMessages);
+
+        controleur.undoSearch();
+
+        verify(viewMock, times(2)).refreshView(mockMessages);
+    }
+
+
+
+
 
 
 

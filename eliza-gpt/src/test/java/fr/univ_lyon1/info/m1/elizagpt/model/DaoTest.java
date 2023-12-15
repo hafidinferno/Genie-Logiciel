@@ -17,18 +17,30 @@ public class DaoTest {
         dao = new Dao();
     }
 
+    /**
+     * Teste la méthode addMessage pour vérifier si un nouveau message
+     * est correctement ajouté à la liste des messages.
+     */
     @Test
     void testAddMessage() {
         dao.addMessage("Ca c'est un test", false);
         List<DataMessage> messages = dao.getAllMessage();
         assertEquals("Ca c'est un test", messages.get(0).getText());
     }
+    /**
+     * Teste la méthode getName pour vérifier si elle extrait correctement
+     * le nom de l'utilisateur à partir d'un message.
+     */
     @Test
     void testGetName() {
         dao.addMessage("Je m'appelle Hafid.", false);
         String name = dao.getName();
         assertEquals("Hafid", name);
     }
+    /**
+     * Teste la méthode search pour vérifier si elle trouve correctement
+     * les messages contenant un mot clé spécifique.
+     */
     @Test
     void testSearch() {
         dao.addMessage("je travaille sur le porjet génie logiciel depuis longtemps", false);
@@ -36,6 +48,10 @@ public class DaoTest {
         List<DataMessage> found = dao.search("long");
         assertEquals(2, found.size());
     }
+    /**
+     * Teste la méthode deleteMessage pour vérifier si elle supprime
+     * correctement un message de la liste en utilisant son hash.
+     */
     @Test
     void testDeleteMessage() {
         dao.addMessage("supprimer le message", false);

@@ -20,14 +20,20 @@ class CreateResponseTest {
 
         createResponse = new CreateResponse();
     }
-
+    /**
+     * Teste la méthode setName pour vérifier si elle affecte correctement le nom,
+     * et si la méthode response renvoie la réponse attendue pour le pattern 1.
+     */
     @Test
     void testSetName() {
         createResponse.setName("Hafid");
         assertEquals("Votre nom est Hafid.", createResponse.response(1, null));
     }
 
-
+    /**
+     * Teste la réponse pour le pattern 0 (salutation). Vérifie si la réponse
+     * correspond au format attendu lorsque le pattern est reconnu.
+     */
     @Test
     void testCreateHelloResponse() {
         String input = "Hafid";
@@ -39,7 +45,10 @@ class CreateResponseTest {
             assertEquals("Bonjour Hafid.", response);
         }
     }
-
+    /**
+     * Teste la réponse pour le pattern 2 (qui est le plus...). Vérifie si la réponse
+     * est correcte pour une entrée donnée correspondant à ce pattern.
+     */
 
     @Test
     void testCreateWhoIsResponse() {
@@ -54,7 +63,10 @@ class CreateResponseTest {
         }
 
     }
-
+    /**
+     * Teste la réponse pour le pattern 3 (réflexion personnelle). Vérifie si la réponse
+     * commence par une des phrases attendues et contient le contenu pertinent.
+     */
     @Test
     void testCreateQuestion() {
         String input = "je suis content";
@@ -70,14 +82,20 @@ class CreateResponseTest {
 
         }
     }
-
+    /**
+     * Teste la réponse pour le pattern 4 (retour de question). Vérifie si la réponse
+     * correspond à une des réponses attendues pour ce pattern.
+     */
     @Test
     void testCreateRetorqueResponse() {
         String response = createResponse.response(4, null);
         assertTrue(response.equals("Je vous renvoie la question")
                 || response.equals("Ici c'est moi qui pose des questions"), response);
     }
-
+    /**
+     * Teste la réponse pour le pattern 5 (adieu). Vérifie si la réponse est appropriée
+     * lorsqu'un utilisateur dit au revoir.
+     */
     @Test
     void testCreateGoodBye() {
         createResponse.setName("Hafid");
@@ -86,7 +104,10 @@ class CreateResponseTest {
                 || response.equals("Oh non, c'est trop triste de se quitter !"), response);
     }
 
-
+    /**
+     * Teste la réponse par défaut (lorsqu'aucun pattern n'est trouvé).
+     * Vérifie si une des réponses attendues est donnée dans un ensemble de tentatives.
+     */
     @Test
     void testChooseDefaultResponse() {
         List<String> expectedResponses = Arrays.asList(

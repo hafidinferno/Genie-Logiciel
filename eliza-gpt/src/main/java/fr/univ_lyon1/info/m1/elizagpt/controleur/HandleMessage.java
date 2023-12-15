@@ -23,7 +23,8 @@ public class HandleMessage {
 
 
 
-	/**
+
+    /**
      * Fonction de réponse qui sera utilisée par l'utilissateur
      * et l'IA.
      * @param text message.
