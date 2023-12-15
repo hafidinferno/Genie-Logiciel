@@ -99,6 +99,9 @@ public final class Controleur  {
      * en arrêtant la recherche.
      */
     public void undoSearch() {
+        for (JfxView view : views) {
+            view.changeSearchLabel("");
+        }
         syncVue();
     }
 
