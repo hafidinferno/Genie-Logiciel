@@ -121,7 +121,7 @@ public class CreateResponse {
      */
     private void chooseDefaultResponse() {
         if (random.nextBoolean()) {
-            responseList.set(6, "Il faut beau aujourd'hui, vous ne trouvez pas ?");
+            responseList.set(6, "Il fait beau aujourd'hui, vous ne trouvez pas ?");
         } else if (random.nextBoolean()) {
             responseList.set(6, "Je ne comprends pas.");
         } else if (random.nextBoolean()) {
