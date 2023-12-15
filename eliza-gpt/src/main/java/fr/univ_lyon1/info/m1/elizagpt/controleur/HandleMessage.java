@@ -6,7 +6,7 @@ import fr.univ_lyon1.info.m1.elizagpt.model.Dao;
 import java.util.ArrayList;
 
 /**
- * Controlleur des messages.
+ * Controleur des messages.
  */
 public class HandleMessage {
 	private final Dao dao;
@@ -45,10 +45,10 @@ public class HandleMessage {
 
     /**
      * Fonction de recherche via regex dans la database.
-	 * @param text chaine de caractère que l'on cherche
+     * @param text chaine de caractère que l'on cherche
      * @return Une liste de messages qui match avec notre recherche.
      */
-    public ArrayList<DataMessage> searchText(final String text) {
+    public ArrayList<DataMessage> search(final String text) {
         return dao.search(text);
     }
 }

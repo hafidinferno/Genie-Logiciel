@@ -7,17 +7,19 @@ import java.util.regex.Pattern;
 
 /**
  * Database de notre programme. Elle regroupe toutes les
- * informations relatives à nos message.
+ * informations relatives à nos messages.
  */
 public final class Dao {
 	private static Dao instance;
 	private final ArrayList<DataMessage> messages;
+	private SearchFunction searchStrategy;
 
 	/**
 	 * Constructeur de la classe.
 	 */
 	public Dao() {
 		messages = new ArrayList<>();
+		searchStrategy = null;
 	}
 
 	/**
@@ -47,7 +49,7 @@ public final class Dao {
 
 	/**
 	 * Fonction permettant de chercher le nom de l'utilisateur.
-	 * @return La fonction retourne une le nom de l'utilisateur s'il existe
+	 * @return La fonction retourne le nom de l'utilisateur s'il existe
 	 * sinon null.
 	 */
 	public String getName() {
@@ -67,35 +69,24 @@ public final class Dao {
 
 	/**
 	 * Recherche dans la database les messages correspondant au text qui lui
-	 * a été donné. cette recherche fonctionne à l'aide de regex.
+	 * a été donné. Cette recherche fonctionne à l'aide de regex.
+	 *
 	 * @param text chaine de caractère que l'on cherche
 	 * @return Une liste de messages qui match avec notre recherche.
 	 */
 	public ArrayList<DataMessage> search(final String text) {
-        Pattern pattern;
-        Matcher matcher;
-        pattern = Pattern.compile(".*" + text + ".*", Pattern.CASE_INSENSITIVE);
-        ArrayList<DataMessage> found = new ArrayList<>();
-        for (DataMessage tuple : messages) {
-			String message = tuple.getText();
-			matcher = pattern.matcher(message);
-			if (matcher.find()) {
-				// Can delete it right now, we're iterating over the list.
-				found.add(tuple);
-			}
-        }
-        return found;
-        //text.setText("");
-    }
+		return searchStrategy.search(text);
+	}
+
 
 	/**
 	 * Fonction permettant d'obtenir une liste de tuples
 	 * [message, hash].
-	 * @return une Arrayliste de couple [message,hash]
+	 * @return une Arraylist de couple [message, hash]
 	 */
 	public ArrayList<DataMessage> getAllMessage() {
-	return messages;
-}
+		return messages;
+	}
 
 	/**
 	 * La fonction permet de supprimer dans notre
@@ -111,6 +102,16 @@ public final class Dao {
 				return;
 			}
 		}
+	}
+
+	/**
+	 * La fonction permet d'appliquer la nouvelle stratégie de recherche
+	 * qui sera utilisée lors de la recherche de message dans notre
+	 * Dao.
+	 * @param strategy nouvelle fonction de recherche utilisée.
+	 */
+	public void setSearchStrategy(final SearchFunction strategy) {
+		searchStrategy = strategy;
 	}
 
 }
