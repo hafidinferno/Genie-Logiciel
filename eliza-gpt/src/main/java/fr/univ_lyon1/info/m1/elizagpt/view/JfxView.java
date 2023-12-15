@@ -2,10 +2,11 @@ package fr.univ_lyon1.info.m1.elizagpt.view;
 
 import java.util.ArrayList;
 import fr.univ_lyon1.info.m1.elizagpt.controleur.Controleur;
-import fr.univ_lyon1.info.m1.elizagpt.model.RegexSearch;
 import fr.univ_lyon1.info.m1.elizagpt.model.DataMessage;
-import fr.univ_lyon1.info.m1.elizagpt.model.SubString;
-import fr.univ_lyon1.info.m1.elizagpt.model.TypeRecherche;
+import fr.univ_lyon1.info.m1.elizagpt.model.searchStrategy.CompleteWordSearch;
+import fr.univ_lyon1.info.m1.elizagpt.model.searchStrategy.RegexSearch;
+import fr.univ_lyon1.info.m1.elizagpt.model.searchStrategy.SubString;
+import fr.univ_lyon1.info.m1.elizagpt.model.searchStrategy.TypeRecherche;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -136,7 +137,8 @@ public class JfxView {
     private ComboBox<TypeRecherche> createListDeroulante() {
         ObservableList<TypeRecherche> listSearchStrategy = FXCollections.observableArrayList(
                 new RegexSearch(),
-                new SubString()
+                new SubString(),
+                new CompleteWordSearch()
         );
 
         ComboBox<TypeRecherche> listeDeroulante = new ComboBox<>();

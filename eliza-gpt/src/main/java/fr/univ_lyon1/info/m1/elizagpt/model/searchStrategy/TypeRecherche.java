@@ -1,4 +1,8 @@
-package fr.univ_lyon1.info.m1.elizagpt.model;
+package fr.univ_lyon1.info.m1.elizagpt.model.searchStrategy;
+
+import fr.univ_lyon1.info.m1.elizagpt.model.Dao;
+import fr.univ_lyon1.info.m1.elizagpt.model.DataMessage;
+import fr.univ_lyon1.info.m1.elizagpt.model.SearchFunction;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;

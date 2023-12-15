@@ -1,4 +1,6 @@
-package fr.univ_lyon1.info.m1.elizagpt.model;
+package fr.univ_lyon1.info.m1.elizagpt.model.searchStrategy;
+
+import fr.univ_lyon1.info.m1.elizagpt.model.DataMessage;
 
 import java.util.ArrayList;
 
