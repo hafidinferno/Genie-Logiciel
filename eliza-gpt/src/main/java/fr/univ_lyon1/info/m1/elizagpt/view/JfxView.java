@@ -2,7 +2,7 @@ package fr.univ_lyon1.info.m1.elizagpt.view;
 
 import java.util.ArrayList;
 import fr.univ_lyon1.info.m1.elizagpt.controleur.Controleur;
-import fr.univ_lyon1.info.m1.elizagpt.controleur.RegexSearch;
+import fr.univ_lyon1.info.m1.elizagpt.model.RegexSearch;
 import fr.univ_lyon1.info.m1.elizagpt.model.DataMessage;
 import fr.univ_lyon1.info.m1.elizagpt.model.SubString;
 import fr.univ_lyon1.info.m1.elizagpt.model.TypeRecherche;
@@ -35,6 +35,7 @@ public class JfxView {
      */
     public JfxView(final Stage stage, final int width, final int height) {
         stage.setTitle("Eliza GPT");
+        controleur = Controleur.getInstance(this);
 
         final VBox root = new VBox(10);
 
@@ -48,7 +49,7 @@ public class JfxView {
         dialogScroll.vvalueProperty().bind(dialog.heightProperty());
         root.getChildren().add(dialogScroll);
         dialogScroll.setFitToWidth(true);
-        controleur = Controleur.getInstance(this);
+
 
         final Pane input = createInputWidget();
         root.getChildren().add(input);
@@ -57,6 +58,7 @@ public class JfxView {
         final Scene scene = new Scene(root, width, height);
         stage.setScene(scene);
         text.requestFocus();
+        controleur.syncVue();
         stage.show();
     }
 
@@ -70,9 +72,9 @@ public class JfxView {
     /**
      * Cette fonction permet de reconstruire notre vue
      * lorsqu'un nouveau message a été envoyer ou plus
-     * généralement quand il y un changement lié à notre base
+     * généralement quand il y a un changement lié à notre base
      * de données.
-     * @param messageArray Liste des message à afficher
+     * @param messageArray Liste des messages à afficher
      */
     public void refreshView(final ArrayList<DataMessage> messageArray) {
         dialog.getChildren().clear();
@@ -102,16 +104,13 @@ public class JfxView {
         firstLine.setAlignment(Pos.BASELINE_LEFT);
         secondLine.setAlignment(Pos.BASELINE_LEFT);
         searchText = new TextField();
-        final ObservableList<TypeRecherche> list = createListDeroulante();
-        ComboBox<TypeRecherche> listeDeroulante = new ComboBox<>();
-        listeDeroulante.setItems(list);
-        listeDeroulante.getSelectionModel().select(1);
+        final Button send = new Button("Search");
+        ComboBox<TypeRecherche> listeDeroulante = createListDeroulante();
         searchText.setOnAction(e -> {
             controleur.searchText(searchText.getText());
             searchText.setText("");
         });
         firstLine.getChildren().addAll(searchText, listeDeroulante);
-        final Button send = new Button("Search");
         send.setOnAction(e -> {
             controleur.searchText(searchText.getText());
             searchText.setText("");
@@ -126,25 +125,29 @@ public class JfxView {
     }
 
     /**
-     * Fonction permettant de connaître la chaine de charactères
-     * recherchée mais aussi l'état de la recherche.
+     * Fonction permettant de connaître la chaine de caractères
+     * recherchée, mais aussi l'état de la recherche.
      * @param searchingText état de la recherche.
      */
     public void changeSearchLabel(final String searchingText) {
         searchTextLabel.setText(searchingText);
     }
 
-    private ObservableList<TypeRecherche> createListDeroulante() {
-
-        ObservableList<TypeRecherche> list = FXCollections.observableArrayList(
+    private ComboBox<TypeRecherche> createListDeroulante() {
+        ObservableList<TypeRecherche> listSearchStrategy = FXCollections.observableArrayList(
                 new RegexSearch(),
                 new SubString()
         );
+
         ComboBox<TypeRecherche> listeDeroulante = new ComboBox<>();
+        listeDeroulante.setItems(listSearchStrategy);
+        listeDeroulante.getSelectionModel().select(1);
+        listeDeroulante.valueProperty().addListener(
+                (ov, oldStrategy, newStrategy) ->
+                        controleur.setStrategy(newStrategy));
+        controleur.setStrategy(listSearchStrategy.get(1));
 
-        listeDeroulante.setItems(list);
-
-        return list;
+        return listeDeroulante;
     }
 
 
