@@ -30,6 +30,14 @@ public final class Controleur  {
         dao = Dao.getInstance();
     }
 
+    public static void setDao(final Dao daoMock) {
+        dao = daoMock;
+    }
+
+
+
+
+
     /**
      * La fonction permet d'obtenir une instance du controleur.
      * Si aucun controleur n'était instancié, alors il est créé.

@@ -45,6 +45,7 @@ public final class Ia {
 		return instance;
 	}
 
+
 	/**
 	 * Fonction permettant de connaitre quel pattern est présent
 	 * dans le message de l'utilisateur afin de lui répondre.

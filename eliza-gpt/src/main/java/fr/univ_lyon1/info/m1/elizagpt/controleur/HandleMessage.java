@@ -21,8 +21,11 @@ public class HandleMessage {
         dao.addMessage("Bonjour.", true);
 	}
 
-	/**
-     * Fonction de réponse qui sera utilisée par l'utilisateur
+
+
+
+    /**
+     * Fonction de réponse qui sera utilisée par l'utilissateur
      * et l'IA.
      * @param text message.
      * @param isIa permet de savoir si le message a été envoyé par l'utilisateur ou l'IA.

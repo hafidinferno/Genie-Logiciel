@@ -35,6 +35,9 @@ public final class Dao {
 		return instance;
 	}
 
+
+
+
 	/**
 	 * Ajoute à notre database un message ainsi que l'ID de
 	 * l'expéditeur.
