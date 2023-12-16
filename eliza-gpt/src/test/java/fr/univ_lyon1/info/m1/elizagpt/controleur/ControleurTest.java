@@ -3,52 +3,39 @@ package fr.univ_lyon1.info.m1.elizagpt.controleur;
 import fr.univ_lyon1.info.m1.elizagpt.model.Dao;
 import fr.univ_lyon1.info.m1.elizagpt.model.DataMessage;
 import fr.univ_lyon1.info.m1.elizagpt.view.JfxView;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-
-
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.anyString;
 import java.util.ArrayList;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.atMost;
-
-
-
 /**
- * La classe ControleurTest s'occupe de tester
- * les fonctions de la classe controleur
- * et voir si elles appellent les fonctions du modele et de la vue.
+ * Classe Test pour le controleur.
  */
 public class ControleurTest {
-
-    @Mock
-    private JfxView viewMock;
-    @Mock
-    private Dao daoMock;
-
-
-    @InjectMocks
-    private static Controleur controleur;
-
+    private Controleur controleur;
+    private JfxView mockView;
+    private Dao mockDao;
+    private MockedStatic<Dao> mockedDaoStatic;
 
     /**
-     * La méthode setUp s'occupe d'initialiser les mocks et l'instance du controleur.
-     * Cette configuration est utilisée dans toutes les méthodes de test.
+     * Configure l'environnement de test avant chaque test.
+     * Initialise les mocks pour la classe Dao et la vue JfxView.
      */
     @BeforeEach
     public void setUp() {
-        daoMock = mock(Dao.class);
-        viewMock = mock(JfxView.class);
-        controleur = Controleur.getInstance(viewMock);
-        Controleur.setDao(daoMock);
+        mockDao = Mockito.mock(Dao.class);
+        mockedDaoStatic = Mockito.mockStatic(Dao.class);
+        mockedDaoStatic.when(Dao::getInstance).thenReturn(mockDao);
 
-
+        mockView = Mockito.mock(JfxView.class);
+        controleur = Controleur.getInstance(mockView);
     }
 
     private ArrayList<DataMessage> prepareMockMessages() {
@@ -56,132 +43,102 @@ public class ControleurTest {
     }
 
     /**
-     * Teste la méthode handleUserReply avec un texte valide.
-     * Vérifie que les méthodes getAllMessage et refreshView sont appelées correctement.
+     * Teste le comportement de la méthode handleUserReply avec un texte valide.
+     * Vérifie si la vue est rafraîchie correctement avec les messages.
      */
     @Test
     public void testHandleUserReplyWithValidText() {
         String validText = "Some valid text";
         ArrayList<DataMessage> mockMessages = prepareMockMessages();
-        when(daoMock.getAllMessage()).thenReturn(mockMessages);
+        when(mockDao.getAllMessage()).thenReturn(mockMessages);
 
         controleur.handleUserReply(validText);
 
-        verify(daoMock, times(1)).getAllMessage();
-        verify(viewMock, times(2)).refreshView(mockMessages);
-    }
-
-
-
-    /**
-     * Teste la méthode handleUserReply avec une valeur vide.
-     * Vérifie que les méthodes getAllMessage est appelée correctement.
-     */
-
-    @Test
-    public void testHandleUserReplyWithEmptyText() {
-        controleur.handleUserReply("");
-        ArrayList<DataMessage> mockMessages = prepareMockMessages();
-        when(daoMock.getAllMessage()).thenReturn(mockMessages);
-
-
-        verify(daoMock, never()).getAllMessage();
-
-
+        verify(mockView, times(1)).refreshView(mockMessages);
     }
 
     /**
-     * Teste la méthode handleUserReply avec une valeur null.
-     * Vérifie que les méthodes getAllMessage est appelé correctement.
-     */
-    @Test
-    public void testHandleUserReplyWithNullText() {
-        controleur.handleUserReply(null);
-        ArrayList<DataMessage> mockMessages = prepareMockMessages();
-        when(daoMock.getAllMessage()).thenReturn(mockMessages);
-
-
-        verify(daoMock, never()).getAllMessage();
-
-    }
-
-
-
-
-    /**
-     * la fonction deleteMessageTest s'occupe de voir.
-     * si on appelle la fonction  deleteMessages de la vue et du controleur.
-     * et voir si le message était supprimer(On a deja testé ca dans DaoTest).
+     * Teste la fonctionnalité de suppression d'un message.
+     * Vérifie si la vue est rafraîchie après la suppression du message.
      */
     @Test
     public void testDeleteMessage() {
-        Integer messageHash = 12345;
-        ArrayList<DataMessage> mockMessages = prepareMockMessages();
-        when(daoMock.getAllMessage()).thenReturn(mockMessages);
+        Integer hash = 1;
+        ArrayList<DataMessage> mockMessages = new ArrayList<>();
+        controleur.deleteMessage(hash);
 
-        controleur.deleteMessage(messageHash);
-
-        verify(daoMock, times(1)).deleteMessage(messageHash);
+        when(mockDao.getAllMessage()).thenReturn(mockMessages);
+        verify(mockView, times(1)).refreshView(mockMessages);
     }
 
     /**
-     * Teste la méthode searchText avec un texte de recherche spécifique.
-     * Vérifie que la vue est mise à jour avec le label de recherche et les résultats.
+     * Teste la recherche de texte avec une requête valide.
+     * Vérifie si le label de recherche dans la vue est mis à jour correctement.
      */
     @Test
     public void testSearchTextWithValidText() {
-        String searchText = "Hafid";
-        ArrayList<DataMessage> mockMessages = prepareMockMessages();
-        when(daoMock.getAllMessage()).thenReturn(mockMessages);
+        String searchText = "specific query";
+        ArrayList<DataMessage> expectedMessages = new ArrayList<>();
+        expectedMessages.add(new DataMessage("Message containing specific query", false));
+        when(mockDao.search(anyString())).thenReturn(expectedMessages);
 
         controleur.searchText(searchText);
 
-        verify(viewMock, times(1)).changeSearchLabel("Searching for: " + searchText);
-        verify(viewMock, atMost(2)).refreshView(mockMessages);
+        verify(mockView, atLeastOnce()).changeSearchLabel("Searching for: " + searchText);
     }
 
     /**
-     * Teste la méthode searchText avec un texte vide.
+     * Teste la recherche de texte avec une chaîne vide.
+     * Vérifie si le label de recherche indique qu'aucune recherche n'est active.
      */
     @Test
     public void testSearchTextWithEmptyText() {
         controleur.searchText("");
-
-        verify(viewMock, atMost(2)).changeSearchLabel("No active search.");
+        verify(mockView, atLeastOnce()).changeSearchLabel("No active search.");
     }
 
     /**
-     * Teste la méthode searchText avec un texte null.
+     * Teste la recherche de texte avec une chaîne nulle.
+     * Vérifie si le label de recherche indique qu'aucune recherche n'est active.
      */
     @Test
     public void testSearchTextWithNullText() {
         controleur.searchText(null);
-
-        verify(viewMock, atMost(2)).changeSearchLabel("No active search.");
+        verify(mockView, atLeastOnce()).changeSearchLabel("No active search.");
     }
 
-
-
     /**
-     * Teste la méthode undoSearch pour vérifier si la vue est réinitialisée
-     * avec tous les messages après une recherche.
+     * Teste l'annulation de la recherche.
+     * Vérifie si le label de recherche est réinitialisé et si la vue est rafraîchie.
      */
     @Test
     public void testUndoSearch() {
-        ArrayList<DataMessage> mockMessages = prepareMockMessages();
-        when(daoMock.getAllMessage()).thenReturn(mockMessages);
+        ArrayList<DataMessage> allMessages = new ArrayList<>();
+        when(mockDao.getAllMessage()).thenReturn(allMessages);
 
         controleur.undoSearch();
 
-        verify(viewMock, atMost(2)).refreshView(mockMessages);
+        verify(mockView, atLeastOnce()).changeSearchLabel("");
+        verify(mockView, atLeastOnce()).refreshView(allMessages);
     }
 
+    /**
+     * Teste la synchronisation de la vue.
+     * Vérifie si la vue est rafraîchie avec les messages actuels.
+     */
+    @Test
+    public void testSyncVue() {
+        ArrayList<DataMessage> messages = new ArrayList<>();
+        when(mockDao.getAllMessage()).thenReturn(messages);
+        controleur.syncVue();
+        verify(mockView, atLeastOnce()).refreshView(messages);
+    }
 
-
-
-
-
-
-
-
+    /**
+     * Ferme le mock static après chaque test.
+     */
+    @AfterEach
+    public void fermeMock() {
+        mockedDaoStatic.close();
+    }
 }

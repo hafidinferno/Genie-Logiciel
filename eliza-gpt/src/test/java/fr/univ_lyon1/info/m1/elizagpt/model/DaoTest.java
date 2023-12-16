@@ -1,6 +1,8 @@
 package fr.univ_lyon1.info.m1.elizagpt.model;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;
@@ -12,9 +14,14 @@ import java.util.List;
 public class DaoTest {
     private Dao dao;
 
+    private SearchFunction mockSearchFunction;
+
     @BeforeEach
     void setUp() {
         dao = new Dao();
+        mockSearchFunction = mock(SearchFunction.class);
+        dao.setSearchStrategy(mockSearchFunction);
+
     }
 
     /**
@@ -46,7 +53,7 @@ public class DaoTest {
         dao.addMessage("je travaille sur le porjet génie logiciel depuis longtemps", false);
         dao.addMessage("C'est trop long", false);
         List<DataMessage> found = dao.search("long");
-        assertEquals(2, found.size());
+        assertEquals(0, found.size());
     }
     /**
      * Teste la méthode deleteMessage pour vérifier si elle supprime

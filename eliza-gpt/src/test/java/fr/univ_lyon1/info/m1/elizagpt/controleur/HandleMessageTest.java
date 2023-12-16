@@ -88,7 +88,7 @@ class HandleMessageTest {
         ArrayList<DataMessage> expectedMessages = new ArrayList<>();
         when(mockDao.search(searchText)).thenReturn(expectedMessages);
 
-        ArrayList<DataMessage> result = handleMessage.searchText(searchText);
+        ArrayList<DataMessage> result = handleMessage.search(searchText);
 
         assertEquals(expectedMessages, result);
     }
