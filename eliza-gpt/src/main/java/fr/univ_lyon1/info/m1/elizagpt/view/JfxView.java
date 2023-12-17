@@ -1,5 +1,7 @@
 package fr.univ_lyon1.info.m1.elizagpt.view;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import fr.univ_lyon1.info.m1.elizagpt.controleur.Controleur;
 import fr.univ_lyon1.info.m1.elizagpt.model.DataMessage;
@@ -16,9 +18,13 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 
@@ -30,32 +36,41 @@ public class JfxView {
     private TextField text = null;
     private TextField searchText = null;
     private Label searchTextLabel = null;
+    private final Image trashIcon;
     private final Controleur controleur;
     /**
      * Create the main view of the application.
      */
-    public JfxView(final Stage stage, final int width, final int height) {
+    public JfxView(final Stage stage, final int width, final int height)
+            throws FileNotFoundException {
         stage.setTitle("Eliza GPT");
         controleur = Controleur.getInstance(this);
 
-        final VBox root = new VBox(10);
+        final BorderPane root = new BorderPane();
+        root.setStyle("-fx-background-color: #000000");
+        trashIcon = new Image(new FileInputStream("data/trashIcon.png"));
+
 
         final Pane search = createSearchWidget();
-        root.getChildren().add(search);
+
 
         ScrollPane dialogScroll = new ScrollPane();
         dialog = new VBox(10);
+        dialog.setStyle("-fx-background-color: #282828");
         dialogScroll.setContent(dialog);
         // scroll to bottom by default:
         dialogScroll.vvalueProperty().bind(dialog.heightProperty());
-        root.getChildren().add(dialogScroll);
+
         dialogScroll.setFitToWidth(true);
 
 
         final Pane input = createInputWidget();
-        root.getChildren().add(input);
+
 
         // Everything's ready: add it to the scene and display it
+        root.setTop(search);
+        root.setCenter(dialog);
+        root.setBottom(input);
         final Scene scene = new Scene(root, width, height);
         stage.setScene(scene);
         text.requestFocus();
@@ -66,8 +81,8 @@ public class JfxView {
     static final String BASE_STYLE = "-fx-padding: 8px; "
             + "-fx-margin: 5px; "
             + "-fx-background-radius: 5px;";
-    static final String USER_STYLE = "-fx-background-color: #A0E0A0; " + BASE_STYLE;
-    static final String ELIZA_STYLE = "-fx-background-color: #A0A0E0; " + BASE_STYLE;
+    static final String USER_STYLE = "-fx-background-color: linear-gradient(#0896d3 30%, #1160cc 70%); " + BASE_STYLE;
+    static final String ELIZA_STYLE = "-fx-background-color: linear-gradient(#a356ee 30%, #6d00ea 70%);" + BASE_STYLE;
 
 
     /**
@@ -83,7 +98,12 @@ public class JfxView {
             HBox motherHBox = new HBox();
             HBox hBox = new HBox();
             final Label label = new Label(message.getText());
-            Button deleteMessageButton = new Button("x");
+            label.setTextFill(Color.WHITE);
+            Button deleteMessageButton = new Button();
+            ImageView icon = new ImageView(trashIcon);
+            icon.setFitHeight(20);
+            icon.setFitWidth(20);
+            deleteMessageButton.setGraphic(icon);
             deleteMessageButton.setOnMouseClicked(e -> controleur.deleteMessage(message.getHash()));
             if (message.isIa()) {
                 hBox.setStyle(ELIZA_STYLE);
@@ -93,6 +113,7 @@ public class JfxView {
                 motherHBox.setAlignment(Pos.BASELINE_RIGHT);
             }
             hBox.getChildren().add(label);
+            hBox.setAlignment(Pos.CENTER);
             hBox.getChildren().add(deleteMessageButton);
             motherHBox.getChildren().add(hBox);
             dialog.getChildren().add(motherHBox);
@@ -104,7 +125,11 @@ public class JfxView {
         final HBox secondLine = new HBox();
         firstLine.setAlignment(Pos.BASELINE_LEFT);
         secondLine.setAlignment(Pos.BASELINE_LEFT);
+
         searchText = new TextField();
+        searchText.setStyle("-fx-background-color: #595959;"
+                + "-fx-text-fill: #FFFFFF;");
+
         final Button send = new Button("Search");
         ComboBox<TypeRecherche> listeDeroulante = createListDeroulante();
         searchText.setOnAction(e -> {
@@ -120,6 +145,7 @@ public class JfxView {
         final Button undo = new Button("Undo search");
         undo.setOnAction(e -> controleur.undoSearch());
         secondLine.getChildren().addAll(send, searchTextLabel, undo);
+
         final VBox input = new VBox();
         input.getChildren().addAll(firstLine, secondLine);
         return input;
@@ -132,6 +158,7 @@ public class JfxView {
      */
     public void changeSearchLabel(final String searchingText) {
         searchTextLabel.setText(searchingText);
+        searchTextLabel.setTextFill(Color.WHITE);
     }
 
     private ComboBox<TypeRecherche> createListDeroulante() {
@@ -153,19 +180,35 @@ public class JfxView {
     }
 
 
-    private Pane createInputWidget() {
+
+
+    private Pane createInputWidget() throws FileNotFoundException {
+        Image imageImp = new Image(new FileInputStream("data/send.png"));
+        ImageView sendIcon = new ImageView(imageImp);
+        sendIcon.setFitWidth(15);
+        sendIcon.setFitHeight(15);
         final Pane input = new HBox();
+        final HBox line = new HBox();
+
+
         text = new TextField();
+        text.setStyle("-fx-background-color: #595959;"
+                + "-fx-text-fill: #FFFFFF;");
+
         text.setOnAction(e -> {
             controleur.handleUserReply(text.getText());
             text.setText("");
         });
-        final Button send = new Button("Send");
+        final Button send = new Button();
+        send.setGraphic(sendIcon);
         send.setOnAction(e -> {
             controleur.handleUserReply(text.getText());
             text.setText("");
         });
-        input.getChildren().addAll(text, send);
+
+        line.getChildren().addAll(text, send);
+        line.setAlignment(Pos.BASELINE_LEFT);
+        input.getChildren().addAll(line);
         return input;
     }
 }
