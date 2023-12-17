@@ -4,9 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.lang.reflect.Field;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,11 +16,19 @@ import java.util.regex.Pattern;
 class CreateResponseTest {
 
     private CreateResponse createResponse;
+    private Random mockRandom;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws NoSuchFieldException, IllegalAccessException {
 
         createResponse = new CreateResponse();
+        createResponse = new CreateResponse();
+        mockRandom = mock(Random.class);
+
+        // Utiliser la réflexion pour accéder au champ `random` de `CreateResponse`
+        Field randomField = CreateResponse.class.getDeclaredField("random");
+        randomField.setAccessible(true);
+        randomField.set(createResponse, mockRandom);
     }
     /**
      * Teste la méthode setName pour vérifier si elle affecte correctement le nom,
@@ -93,7 +103,7 @@ class CreateResponseTest {
                 || response.equals("Ici c'est moi qui pose des questions"), response);
     }
     /**
-     * Teste la réponse pour le pattern 5 (adieu). Vérifie si la réponse est appropriée
+     * Teste la réponse pour le pattern 5 . Vérifie si la réponse est appropriée
      * lorsqu'un utilisateur dit au revoir.
      */
     @Test
@@ -105,31 +115,59 @@ class CreateResponseTest {
     }
 
     /**
-     * Teste la réponse par défaut (lorsqu'aucun pattern n'est trouvé).
+     * Teste la réponse par défaut(Plusieurs cas).
      * Vérifie si une des réponses attendues est donnée dans un ensemble de tentatives.
      */
     @Test
     void testChooseDefaultResponse() {
-        List<String> expectedResponses = Arrays.asList(
-                "Il fait beau aujourd'hui, vous ne trouvez pas ?",
-                "Je ne comprends pas.",
-                "Hmmm, hmm ...",
-                "Qu'est-ce qui vous fait dire cela, ?",
-                "Qu'est ce qui vous fait dire cela ?"
-        );
 
-        boolean foundExpectedResponse = false;
-        for (int i = 0; i < 100; i++) {
-            String response = createResponse.response(6, null);
-            if (expectedResponses.contains(response)) {
-                foundExpectedResponse = true;
-                break;
-            }
-        }
+        when(mockRandom.nextBoolean()).thenReturn(true);
+        createResponse.response(7, null);
+        assertEquals("Il fait beau aujourd'hui, vous ne trouvez pas ?",
+                createResponse.response(7, null));
 
-        assertTrue(foundExpectedResponse);
+
+        // Test de la branche avec le nom d'utilisateur
+        createResponse.setName("Hafid");
+        when(mockRandom.nextBoolean()).thenReturn(false, false, false);
+        createResponse.response(7, null);
+        assertEquals("Qu'est-ce qui vous fait dire cela, Hafid ?",
+                createResponse.response(7, null));
+
+
     }
 
+    /**
+     * Pour les tests de la méthodes response.
+     * je vais faire 2 cas avec les deux premières patterns.
+     * et la réponse par défault
+     */
+    @Test
+    void testResponseForHello() {
+        Matcher mockMatcher = mock(Matcher.class);
+        when(mockMatcher.group(1)).thenReturn("Hafid");
+
+        String result = createResponse.response(0, mockMatcher);
+        assertEquals("Bonjour Hafid.", result);
+    }
+
+
+    @Test
+    void testResponseForWho() {
+        Matcher mockMatcher = mock(Matcher.class);
+        when(mockMatcher.group(1)).thenReturn("beau");
+
+        String result = createResponse.response(2, mockMatcher);
+        assertEquals("Le plus beau est bien sûr votre enseignant de MIF01 !", result);
+    }
+
+
+    @Test
+    void testResponseForDefault() {
+        when(mockRandom.nextBoolean()).thenReturn(true);
+        String result = createResponse.response(7, null);
+        assertEquals("Il fait beau aujourd'hui, vous ne trouvez pas ?", result);
+    }
 
 
 

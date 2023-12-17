@@ -20,7 +20,6 @@ import java.util.Arrays;
 
 public class SubStringTest {
     private SubString subStringSearch;
-    private Dao mockDao;
     private MockedStatic<Dao> mockedDaoStatic;
 
     /**
@@ -29,7 +28,7 @@ public class SubStringTest {
      */
     @BeforeEach
     public void setUp() {
-        mockDao = Mockito.mock(Dao.class);
+        Dao mockDao = Mockito.mock(Dao.class);
         mockedDaoStatic = Mockito.mockStatic(Dao.class);
         mockedDaoStatic.when(Dao::getInstance).thenReturn(mockDao);
         subStringSearch = new SubString();
