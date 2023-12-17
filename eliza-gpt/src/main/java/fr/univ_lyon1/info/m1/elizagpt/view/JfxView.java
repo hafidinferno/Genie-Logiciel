@@ -81,8 +81,12 @@ public class JfxView {
     static final String BASE_STYLE = "-fx-padding: 8px; "
             + "-fx-margin: 5px; "
             + "-fx-background-radius: 5px;";
-    static final String USER_STYLE = "-fx-background-color: linear-gradient(#0896d3 30%, #1160cc 70%); " + BASE_STYLE;
-    static final String ELIZA_STYLE = "-fx-background-color: linear-gradient(#a356ee 30%, #6d00ea 70%);" + BASE_STYLE;
+    static final String USER_STYLE = "-fx-background-color: "
+                                + "linear-gradient(#0896d3 30%, #1160cc 70%); "
+            + BASE_STYLE;
+    static final String ELIZA_STYLE = "-fx-background-color:"
+                                + " linear-gradient(#a356ee 30%, #6d00ea 70%);"
+            + BASE_STYLE;
 
 
     /**
