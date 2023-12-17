@@ -14,12 +14,10 @@ import java.util.List;
 public class DaoTest {
     private Dao dao;
 
-    private SearchFunction mockSearchFunction;
-
     @BeforeEach
     void setUp() {
         dao = new Dao();
-        mockSearchFunction = mock(SearchFunction.class);
+        SearchFunction mockSearchFunction = mock(SearchFunction.class);
         dao.setSearchStrategy(mockSearchFunction);
 
     }
