@@ -30,9 +30,7 @@ public final class Controleur  {
         dao = Dao.getInstance();
     }
 
-    public static void setDao(final Dao daoMock) {
-        dao = daoMock;
-    }
+
 
 
 

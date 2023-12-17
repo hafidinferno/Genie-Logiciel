@@ -20,7 +20,6 @@ import java.util.Arrays;
 
 public class CompleteWordSearchTest {
     private CompleteWordSearch completeWordSearch;
-    private Dao mockDao;
     private MockedStatic<Dao> mockedDaoStatic;
 
     /**
@@ -29,7 +28,7 @@ public class CompleteWordSearchTest {
      */
     @BeforeEach
     public void setUp() {
-        mockDao = Mockito.mock(Dao.class);
+        Dao mockDao = Mockito.mock(Dao.class);
         mockedDaoStatic = Mockito.mockStatic(Dao.class);
         mockedDaoStatic.when(Dao::getInstance).thenReturn(mockDao);
 

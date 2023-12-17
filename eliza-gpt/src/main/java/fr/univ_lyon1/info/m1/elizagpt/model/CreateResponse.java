@@ -117,12 +117,13 @@ public class CreateResponse {
     }
 
     /**
-     * Crée un message correspondant à un message
-     * de l'utilisateur se terminant avec un point
+     * Crée un message correspondant à un message.
+     * de l'utilisateur se terminant avec un point.
      * d'exclamation
      */
     private void createHappyResponse() {
-        responseList.set(6, "Le saviez-vous? Un chat très connu à un jour dit : " +
+        responseList.set(6, "Le saviez-vous? Un chat très connu à un jour dit : "
+                +
                 "\"Yippee\".");
     }
 
