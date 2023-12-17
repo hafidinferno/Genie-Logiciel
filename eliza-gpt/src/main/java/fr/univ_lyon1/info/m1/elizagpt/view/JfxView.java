@@ -211,7 +211,6 @@ public class JfxView {
         });
 
         line.getChildren().addAll(text, send);
-        line.setAlignment(Pos.BASELINE_LEFT);
         input.getChildren().addAll(line);
         return input;
     }

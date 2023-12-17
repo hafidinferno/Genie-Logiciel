@@ -10,8 +10,9 @@ import java.util.Random;
 public class MessageProcessor {
     private final Random random = new Random();
     /**
-     * Normlize the text: remove extra spaces, add a final dot if missing.
-     * @param text
+     * Normalise le texte en enlevant les espace inutile et
+     * en ajoutant un point à la fin.
+     * @param text Message de l'utilisateur.
      * @return normalized text.
      */
     public String normalize(final String text) {
@@ -22,7 +23,7 @@ public class MessageProcessor {
     }
 
     /**
-     * Information about conjugation of a verb.
+     * Information à propos de la conjugaison des verbes.
      */
     public static class Verb {
         private final String firstSingular;
@@ -43,8 +44,8 @@ public class MessageProcessor {
     }
 
     /**
-     * List of 3rd group verbs and their correspondance from 1st person signular
-     * (Je) to 2nd person plural (Vous).
+     * Liste de verbes du troisième groupe et à la première personne
+     * du singulier et leur à la deuxième personne du pluriel.
      */
     protected static final List<Verb> VERBS = Arrays.asList(
             new Verb("suis", "êtes"),
@@ -59,13 +60,10 @@ public class MessageProcessor {
 
 
     /**
-     * Turn a 1st-person sentence (Je ...) into a plural 2nd person (Vous ...).
-     * The result is not capitalized to allow forming a new sentence.
-     *
-     * TODO: does not deal with all 3rd group verbs.
-     *
-     * @param text
-     * @return The 2nd-person sentence.
+     * Transforme les phrases de la première personne du
+     * singulier à la deuxième personne du pluriel.
+     * @param text Message envoyé par l'utilisateur
+     * @return Phrase à la seconde personne du pluriel.
      */
     public String firstToSecondPerson(final String text) {
         String processedText = text
@@ -84,7 +82,9 @@ public class MessageProcessor {
         return processedText;
     }
 
-    /** Pick an element randomly in the array. */
+    /**
+     *  Récupère aléatoirement un élément dans la liste.
+     */
     public <T> T pickRandom(final T[] array) {
         return array[random.nextInt(array.length)];
     }
